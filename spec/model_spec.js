@@ -17,6 +17,33 @@ describe('Model', () => {
     context('lightworld locations', () => {
 
         with_cases(
+        ['lightworld_northwest', 'altar'],
+        ['lightworld_northwest', 'tree'],
+        ['lightworld_northwest', 'graveyard_w'],
+        ['lightworld_northwest', 'graveyard_n'],
+        ['lightworld_northwest', 'graveyard_e'],
+        ['lightworld_northwest', 'kid'],
+        ['lightworld_northwest', 'frog'],
+        ['lightworld_northwest', 'bat'],
+        ['lightworld_northeast', 'zora'],
+        ['lightworld_northeast', 'river'],
+        ['lightworld_northeast', 'fairy_lw'],
+        ['lightworld_northeast', 'witch'],
+        ['lightworld_northeast', 'sahasrahla'],
+        ['lightworld_south', 'library'],
+        ['lightworld_south', 'grove_n'],
+        ['lightworld_south', 'grove_s'],
+        ['lightworld_south', 'desert_w'],
+        ['lightworld_south', 'desert_ne'],
+        ['lightworld_south', 'bombos'],
+        ['lightworld_south', 'island_lake'],
+        ['lightworld_south', 'hobo'],
+        (region, name) => it(`shows ${region} - ${name} as unavailable without any items`, () => {
+            const actual = model.state();
+            actual.lightworld[name].should.be.false;
+        }));
+
+        with_cases(
         ['lightworld_northwest', 'mushroom'],
         ['lightworld_northwest', 'hideout'],
         ['lightworld_northwest', 'well'],
@@ -31,7 +58,7 @@ describe('Model', () => {
         ['lightworld_south', 'dam'],
         ['lightworld_south', 'lake_sw'],
         ['lightworld_south', 'ice_cave'],
-        (region, name) => it(`shows ${region} - ${name} as available`, () => {
+        (region, name) => it(`shows ${region} - ${name} as available without any items`, () => {
             const actual = model.state();
             actual.lightworld[name].should.be.true;
         }));
