@@ -17,8 +17,15 @@ describe('Model', () => {
     context('lightworld locations', () => {
 
         with_cases(
+        ['lightworld_deathmountain_west', 'ether'],
+        ['lightworld_deathmountain_west', 'spectacle_rock'],
+        ['lightworld_deathmountain_west', 'spectacle_cave'],
+        ['lightworld_deathmountain_west', 'old_man'],
+        ['lightworld_deathmountain_east', 'island_dm'],
+        ['lightworld_deathmountain_east', 'spiral'],
+        ['lightworld_deathmountain_east', 'paradox'],
+        ['lightworld_deathmountain_east', 'mimic'],
         ['lightworld_northwest', 'altar'],
-        ['lightworld_northwest', 'tree'],
         ['lightworld_northwest', 'graveyard_w'],
         ['lightworld_northwest', 'graveyard_n'],
         ['lightworld_northwest', 'graveyard_e'],
@@ -30,13 +37,10 @@ describe('Model', () => {
         ['lightworld_northeast', 'fairy_lw'],
         ['lightworld_northeast', 'witch'],
         ['lightworld_northeast', 'sahasrahla'],
-        ['lightworld_south', 'library'],
         ['lightworld_south', 'grove_n'],
         ['lightworld_south', 'grove_s'],
-        ['lightworld_south', 'desert_w'],
         ['lightworld_south', 'desert_ne'],
         ['lightworld_south', 'bombos'],
-        ['lightworld_south', 'island_lake'],
         ['lightworld_south', 'hobo'],
         (region, name) => it(`shows ${region} - ${name} as unavailable without any items`, () => {
             const actual = model.state();
