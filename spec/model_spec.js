@@ -69,4 +69,31 @@ describe('Model', () => {
 
     });
 
+    context('darkworld locations', () => {
+
+        with_cases(
+        ['darkworld_deathmountain_west', 'spike'],
+        ['darkworld_deathmountain_east', 'rock_hook'],
+        ['darkworld_deathmountain_east', 'rock_boots'],
+        ['darkworld_deathmountain_east', 'bunny'],
+        ['darkworld_northwest', 'bumper'],
+        ['darkworld_northwest', 'chest_game'],
+        ['darkworld_northwest', 'c_house'],
+        ['darkworld_northwest', 'bomb_hut'],
+        ['darkworld_northwest', 'purple'],
+        ['darkworld_northwest', 'pegs'],
+        ['darkworld_northeast', 'catfish'],
+        ['darkworld_northeast', 'pyramid'],
+        ['darkworld_northeast', 'fairy_dw'],
+        ['darkworld_south', 'dig_game'],
+        ['darkworld_south', 'stumpy'],
+        ['darkworld_south', 'swamp_ne'],
+        ['darkworld_mire', 'mire_w'],
+        (region, name) => it(`shows ${region} - ${name} as unavailable without any items`, () => {
+            const actual = model.state();
+            actual.darkworld[name].should.be.false;
+        }));
+
+    });
+
 });
