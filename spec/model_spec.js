@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const with_cases = require('./spec_helper').with_cases;
 
 const chai = require('chai');
@@ -10,7 +12,17 @@ const inventory = (tokens) => {
     tokens = tokens.split(' ');
     return {
         update(model) {
-            tokens.forEach(token => model.toggle_item(token));
+            const raise = {
+                bottle: ['bottle', 1],
+                glove: ['glove', 1]
+            };
+            tokens.forEach(token => {
+                const item = raise[token];
+                const action = item ?
+                    ([item, n]) => _.times(n, () => model.raise_item(item)) :
+                    ([item]) => model.toggle_item(item);
+                action(item || [token]);
+            });
         },
         toString() {
             return tokens.join(', ');
@@ -81,7 +93,9 @@ describe('Model', () => {
 
         with_cases(
         ['lightworld_northwest', 'graveyard_w', inventory('boots')],
+        ['lightworld_northwest', 'kid', inventory('bottle')],
         ['lightworld_northeast', 'zora', inventory('flippers')],
+        ['lightworld_northeast', 'zora', inventory('glove')],
         ['lightworld_northeast', 'river', inventory('flippers')],
         ['lightworld_northeast', 'fairy_lw', inventory('flippers')],
         ['lightworld_northeast', 'witch', inventory('mushroom')],

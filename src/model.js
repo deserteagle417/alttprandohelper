@@ -68,6 +68,14 @@
             },
             toggle_item(name) {
                 items = update(items, update.toggle(name));
+            },
+            raise_item(name) {
+                const limit = items.limit[name];
+                const [max, min] = limit[0] ? limit : [limit, 0];
+                const delta = 1;
+                const modulo = max-min+1;
+                const value = (items[name]-min + modulo + delta) % modulo + min;
+                items = update(items, { [name]: { $set: value } });
             }
         }
     };
