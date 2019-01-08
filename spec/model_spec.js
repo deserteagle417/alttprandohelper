@@ -6,6 +6,18 @@ chai.should();
 
 const create_model = require('../src/model');
 
+const inventory = (tokens) => {
+    tokens = tokens.split(' ');
+    return {
+        update(model) {
+            tokens.forEach(token => model.toggle_item(token));
+        },
+        toString() {
+            return tokens.join(', ');
+        }
+    }
+};
+
 describe('Model', () => {
 
     let model;
@@ -63,6 +75,21 @@ describe('Model', () => {
         ['lightworld_south', 'lake_sw'],
         ['lightworld_south', 'ice_cave'],
         (region, name) => it(`shows ${region} - ${name} as available without any items`, () => {
+            const actual = model.state();
+            actual.lightworld[name].should.be.true;
+        }));
+
+        with_cases(
+        ['lightworld_northwest', 'graveyard_w', inventory('boots')],
+        ['lightworld_northeast', 'zora', inventory('flippers')],
+        ['lightworld_northeast', 'river', inventory('flippers')],
+        ['lightworld_northeast', 'fairy_lw', inventory('flippers')],
+        ['lightworld_northeast', 'witch', inventory('mushroom')],
+        ['lightworld_south', 'library', inventory('boots')],
+        ['lightworld_south', 'grove_n', inventory('shovel')],
+        ['lightworld_south', 'hobo', inventory('flippers')],
+        (region, name, inventory) => it(`shows ${region} - ${name} as available with ${inventory}`, () => {
+            inventory.update(model);
             const actual = model.state();
             actual.lightworld[name].should.be.true;
         }));
