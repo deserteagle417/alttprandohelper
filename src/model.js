@@ -29,8 +29,6 @@
                     darkworld_south,
                     darkworld_mire
                 } = world;
-                const have_lightworld_deathmountain_west_can_enter = !!lightworld_deathmountain_west.can_enter;
-                const have_lightworld_deathmountain_east_can_enter = !!lightworld_deathmountain_east.can_enter;
                 const have_lightworld_northwest_can_enter = !!lightworld_northwest.can_enter;
                 const have_lightworld_northeast_can_enter = !!lightworld_northeast.can_enter;
                 const have_lightworld_south_can_enter = !!lightworld_south.can_enter;
@@ -42,9 +40,11 @@
                 const have_darkworld_mire_can_enter = !!darkworld_mire.can_enter;
                 return { lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
-                        !have_lightworld_deathmountain_west_can_enter && !location.can_access),
+                        (!lightworld_deathmountain_west.can_enter || lightworld_deathmountain_west.can_enter({ items, world})) &&
+                            (!location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(lightworld_deathmountain_east.locations, location =>
-                        !have_lightworld_deathmountain_east_can_enter && !location.can_access),
+                        (!lightworld_deathmountain_east.can_enter || lightworld_deathmountain_east.can_enter({ items, world})) &&
+                            (!location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(lightworld_northwest.locations, location =>
                         !have_lightworld_northwest_can_enter && (!location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(lightworld_northeast.locations, location =>

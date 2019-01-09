@@ -14,7 +14,8 @@ const inventory = (tokens) => {
         update(model) {
             const raise = {
                 bottle: ['bottle', 1],
-                glove: ['glove', 1]
+                glove: ['glove', 1],
+                mitt: ['glove', 2]
             };
             tokens.forEach(token => {
                 const item = raise[token];
@@ -102,6 +103,12 @@ describe('Model', () => {
         }));
 
         with_cases(
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('glove')],
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('flute')],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('glove mirror hammer')],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('flute mirror hammer')],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('glove hookshot')],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('flute hookshot')],
         ['lightworld_northeast', 'river', inventory('glove')],
         (region, name, inventory) => it(`shows ${region} - ${name} as viewable with ${inventory}`, () => {
             inventory.update(model);
@@ -110,6 +117,32 @@ describe('Model', () => {
         }));
 
         with_cases(
+        ['lightworld_deathmountain_west', 'old_man', inventory('flute')],
+        (region, name, inventory) => it(`shows ${region} - ${name} as dark with ${inventory}`, () => {
+            inventory.update(model);
+            const actual = model.state();
+            actual.lightworld[name].should.equal('dark');
+        }));
+
+        with_cases(
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('glove lamp mirror')],
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('flute mirror')],
+        ['lightworld_deathmountain_west', 'spectacle_cave', inventory('glove lamp')],
+        ['lightworld_deathmountain_west', 'spectacle_cave', inventory('flute')],
+        ['lightworld_deathmountain_west', 'old_man', inventory('glove lamp')],
+        ['lightworld_deathmountain_west', 'old_man', inventory('flute lamp')],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('lamp hammer mitt moonpearl mirror')],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('flute hammer mitt moonpearl mirror')],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('lamp hookshot mitt moonpearl mirror')],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('flute hookshot mitt moonpearl mirror')],
+        ['lightworld_deathmountain_east', 'spiral', inventory('glove lamp hammer mirror')],
+        ['lightworld_deathmountain_east', 'spiral', inventory('flute hammer mirror')],
+        ['lightworld_deathmountain_east', 'spiral', inventory('glove lamp hookshot')],
+        ['lightworld_deathmountain_east', 'spiral', inventory('flute hookshot')],
+        ['lightworld_deathmountain_east', 'paradox', inventory('glove lamp hammer mirror')],
+        ['lightworld_deathmountain_east', 'paradox', inventory('flute hammer mirror')],
+        ['lightworld_deathmountain_east', 'paradox', inventory('glove lamp hookshot')],
+        ['lightworld_deathmountain_east', 'paradox', inventory('flute hookshot')],
         ['lightworld_northwest', 'graveyard_w', inventory('boots')],
         ['lightworld_northwest', 'kid', inventory('bottle')],
         ['lightworld_northeast', 'zora', inventory('flippers')],
