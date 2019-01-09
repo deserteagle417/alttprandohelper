@@ -72,6 +72,16 @@ describe('Model', () => {
         }));
 
         with_cases(
+        ['lightworld_northwest', 'tree'],
+        ['lightworld_south', 'library'],
+        ['lightworld_south', 'desert_w'],
+        ['lightworld_south', 'island_lake'],
+        (region, name) => it(`shows ${region} - ${name} as viewable without any items`, () => {
+            const actual = model.state();
+            actual.lightworld[name].should.equal('viewable');
+        }));
+
+        with_cases(
         ['lightworld_northwest', 'mushroom'],
         ['lightworld_northwest', 'hideout'],
         ['lightworld_northwest', 'well'],
@@ -89,6 +99,14 @@ describe('Model', () => {
         (region, name) => it(`shows ${region} - ${name} as available without any items`, () => {
             const actual = model.state();
             actual.lightworld[name].should.be.true;
+        }));
+
+        with_cases(
+        ['lightworld_northeast', 'river', inventory('glove')],
+        (region, name, inventory) => it(`shows ${region} - ${name} as viewable with ${inventory}`, () => {
+            inventory.update(model);
+            const actual = model.state();
+            actual.lightworld[name].should.equal('viewable');
         }));
 
         with_cases(
