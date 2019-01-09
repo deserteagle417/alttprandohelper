@@ -38,13 +38,21 @@
                 const have_darkworld_northeast_can_enter = !!darkworld_northeast.can_enter;
                 const have_darkworld_south_can_enter = !!darkworld_south.can_enter;
                 const have_darkworld_mire_can_enter = !!darkworld_mire.can_enter;
+                const region_state = (region, args) =>
+                    !region.can_enter || region.can_enter(args) ||
+                    !!region.can_enter_dark && region.can_enter_dark(args) && 'dark';
+                const derive_state = (region, location) =>
+                    region === true ? location :
+                    location === true ? region :
+                    location;
+                let state;
                 return { lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
-                        (!lightworld_deathmountain_west.can_enter || lightworld_deathmountain_west.can_enter({ items, world})) &&
-                            (!location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(lightworld_deathmountain_west, { items, world })) &&
+                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(lightworld_deathmountain_east.locations, location =>
-                        (!lightworld_deathmountain_east.can_enter || lightworld_deathmountain_east.can_enter({ items, world})) &&
-                            (!location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(lightworld_deathmountain_east, { items, world })) &&
+                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(lightworld_northwest.locations, location =>
                         !have_lightworld_northwest_can_enter && (!location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(lightworld_northeast.locations, location =>

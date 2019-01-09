@@ -117,7 +117,16 @@ describe('Model', () => {
         }));
 
         with_cases(
+        ['lightworld_deathmountain_west', 'old_man', inventory('glove')],
         ['lightworld_deathmountain_west', 'old_man', inventory('flute')],
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('glove mirror')],
+        ['lightworld_deathmountain_west', 'spectacle_cave', inventory('glove')],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('hammer mitt moonpearl mirror')],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('hookshot mitt moonpearl mirror')],
+        ['lightworld_deathmountain_east', 'spiral', inventory('glove mirror hammer')],
+        ['lightworld_deathmountain_east', 'spiral', inventory('glove hookshot')],
+        ['lightworld_deathmountain_east', 'paradox', inventory('glove hammer mirror')],
+        ['lightworld_deathmountain_east', 'paradox', inventory('glove hookshot')],
         (region, name, inventory) => it(`shows ${region} - ${name} as dark with ${inventory}`, () => {
             inventory.update(model);
             const actual = model.state();
