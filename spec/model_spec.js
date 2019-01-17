@@ -152,6 +152,56 @@ describe('Model', () => {
             }));
 
         });
+
+        context('tower of hera', () => {
+
+            with_cases(
+            [inventory.none, false],
+            [inventory('fightersword firerod'), false],
+            [inventory('mirror flute fightersword firerod'), true],
+            [inventory('mirror flute hammer firerod'), true],
+            [inventory('mirror flute fightersword lamp'), true],
+            [inventory('mirror flute hammer lamp'), true],
+            [inventory('mirror flute fightersword'), 'possible'],
+            [inventory('mirror flute hammer'), 'possible'],
+            [inventory('mirror glove lamp fightersword'), true],
+            [inventory('mirror glove lamp hammer'), true],
+            [inventory('hookshot hammer flute firerod'), true],
+            [inventory('hookshot hammer flute lamp'), true],
+            [inventory('hookshot hammer flute'), 'possible'],
+            [inventory('hookshot hammer glove lamp'), true],
+            [inventory('mirror glove fightersword'), 'possible'],
+            [inventory('mirror glove hammer'), 'possible'],
+            [inventory('mirror glove fightersword firerod'), 'dark'],
+            [inventory('mirror glove hammer firerod'), 'dark'],
+            [inventory('hookshot hammer glove'), 'possible'],
+            [inventory('hookshot hammer glove firerod'), 'dark'],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.hera.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [inventory.none, false],
+            [inventory('firerod'), false],
+            [inventory('mirror flute firerod'), true],
+            [inventory('mirror flute lamp'), true],
+            [inventory('mirror flute'), 'possible'],
+            [inventory('mirror glove lamp'), true],
+            [inventory('hookshot hammer flute firerod'), true],
+            [inventory('hookshot hammer flute lamp'), true],
+            [inventory('hookshot hammer flute'), 'possible'],
+            [inventory('hookshot hammer glove lamp'), true],
+            [inventory('mirror glove'), 'possible'],
+            [inventory('mirror glove firerod'), 'dark'],
+            (inventory, state) => it(`show progressable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.hera.progressable.should.equal(state);
+            }));
+
+        });
         
     });
 

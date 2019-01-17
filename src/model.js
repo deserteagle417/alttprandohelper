@@ -56,6 +56,12 @@
                             derive_state(state, world.desert.can_complete({ items })),
                         progressable: (state = region_state(world.desert, { items, region: world.desert })) &&
                             derive_state(state, world.desert.can_progress({ items, region: world.desert }))
+                    },
+                    hera: {
+                        completable: (state = region_state(world.hera, { items, world })) &&
+                            derive_state(state, world.hera.can_complete({ items, world })),
+                        progressable: (state = region_state(world.hera, { items, world })) &&
+                            derive_state(state, world.hera.can_progress({ items, world }))
                     }
                 }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
