@@ -57,6 +57,8 @@ const as = state => `as ${
     state === false ? 'unavailable' :
     state}`;
 
+const defeated = agahnim => agahnim ? ' and agahnim defeated' : '';
+
 describe('Model', () => {
 
     let model;
@@ -199,6 +201,44 @@ describe('Model', () => {
                 inventory.update(model);
                 const actual = model.state();
                 actual.dungeons.hera.progressable.should.equal(state);
+            }));
+
+        });
+
+        context('palace of darkness', () => {
+
+            with_cases(
+            [false, inventory.none, false],
+            [false, inventory('bow hammer lamp'), false],
+            [false, inventory('moonpearl glove hammer bow lamp'), true],
+            [false, inventory('moonpearl glove hammer bow'), 'dark'],
+            [true, inventory('moonpearl bow hammer lamp'), true],
+            [true, inventory('moonpearl bow hammer'), 'dark'],
+            (agahnim, inventory, state) => it(`show completable ${as(state)} ${inventory}${defeated(agahnim)}`, () => {
+                agahnim && model.toggle_completion('castle_tower');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.darkness.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [false, dungeon.initial, inventory.none, false],
+            [false, dungeon.initial, inventory('bow lamp'), false],
+            [false, dungeon.initial, inventory('moonpearl glove hammer bow lamp'), true],
+            [false, dungeon.initial, inventory('moonpearl glove hammer'), 'possible'],
+            [false, dungeon({ opened: 4 }), inventory('moonpearl mitt flippers bow lamp hammer'), true],
+            [false, dungeon({ opened: 4 }), inventory('moonpearl mitt flippers bow lamp'), 'possible'],
+            [false, dungeon.initial, inventory('moonpearl mitt flippers'), 'possible'],
+            [true, dungeon.initial, inventory('moonpearl bow lamp'), true],
+            [true, dungeon.initial, inventory('moonpearl'), 'possible'],
+            [true, dungeon({ opened: 4 }), inventory('moonpearl bow lamp hammer'), true],
+            [true, dungeon({ opened: 4 }), inventory('moonpearl bow lamp'), 'possible'],
+            (agahnim, dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}${defeated(agahnim)}`, () => {
+                agahnim && model.toggle_completion('castle_tower');
+                dungeon.update(model, 'darkness');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.darkness.progressable.should.equal(state);
             }));
 
         });

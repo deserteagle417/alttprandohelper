@@ -62,6 +62,12 @@
                             derive_state(state, world.hera.can_complete({ items, world })),
                         progressable: (state = region_state(world.hera, { items, world })) &&
                             derive_state(state, world.hera.can_progress({ items, world }))
+                    },
+                    darkness: {
+                        completable: (state = region_state(world.darkness, { items, world })) &&
+                            derive_state(state, world.darkness.can_complete({ items, world })),
+                        progressable: (state = region_state(world.darkness, { items, world, region: world.darkness })) &&
+                            derive_state(state, world.darkness.can_progress({ items, world, region: world.darkness }))
                     }
                 }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
@@ -101,6 +107,9 @@
                 const modulo = max-min+1;
                 const value = (items[name]-min + modulo + delta) % modulo + min;
                 items = update(items, { [name]: { $set: value } });
+            },
+            toggle_completion(region) {
+                world = update(world, { [region]: update.toggle('completed') });
             },
             lower_chest(region) {
                 const { chests, chest_limit } = world[region];
