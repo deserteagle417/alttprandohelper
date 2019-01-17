@@ -28,6 +28,7 @@ const inventory = (tokens = null) => {
     return {
         update(model) {
             const raise = {
+                fightersword: ['sword', 1],
                 bow: ['bow', 2],
                 bottle: ['bottle', 1],
                 glove: ['glove', 1],
@@ -89,6 +90,65 @@ describe('Model', () => {
                 inventory.update(model);
                 const actual = model.state();
                 actual.dungeons.eastern.progressable.should.equal(state);
+            }));
+
+        });
+
+        context('desert palace', () => {
+
+            with_cases(
+            [inventory.none, false],
+            [inventory('glove lamp fightersword boots'), false],
+            [inventory('book glove lamp fightersword'), 'possible'],
+            [inventory('book glove lamp hammer'), 'possible'],
+            [inventory('book glove lamp bow'), 'possible'],
+            [inventory('book glove lamp icerod'), 'possible'],
+            [inventory('book glove lamp somaria'), 'possible'],
+            [inventory('book glove lamp byrna'), 'possible'],
+            [inventory('book glove firerod'), 'possible'],
+            [inventory('book glove lamp fightersword boots'), true],
+            [inventory('book glove lamp hammer boots'), true],
+            [inventory('book glove lamp bow boots'), true],
+            [inventory('book glove lamp icerod boots'), true],
+            [inventory('book glove lamp somaria boots'), true],
+            [inventory('book glove lamp byrna boots'), true],
+            [inventory('book glove firerod boots'), true],
+            [inventory('mirror mitt flute lamp fightersword'), 'possible'],
+            [inventory('mirror mitt flute lamp hammer'), 'possible'],
+            [inventory('mirror mitt flute lamp bow'), 'possible'],
+            [inventory('mirror mitt flute lamp icerod'), 'possible'],
+            [inventory('mirror mitt flute lamp somaria'), 'possible'],
+            [inventory('mirror mitt flute lamp byrna'), 'possible'],
+            [inventory('mirror mitt flute firerod'), 'possible'],
+            [inventory('mirror mitt flute lamp fightersword boots'), true],
+            [inventory('mirror mitt flute lamp hammer boots'), true],
+            [inventory('mirror mitt flute lamp bow boots'), true],
+            [inventory('mirror mitt flute lamp icerod boots'), true],
+            [inventory('mirror mitt flute lamp somaria boots'), true],
+            [inventory('mirror mitt flute lamp byrna boots'), true],
+            [inventory('mirror mitt flute firerod boots'), true],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.desert.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [dungeon.initial, inventory.none, false],
+            [dungeon.initial, inventory('boots'), false],
+            [dungeon.initial, inventory('book'), 'possible'],
+            [dungeon.initial, inventory('book boots'), true],
+            [dungeon({ opened: 1}), inventory('book boots glove lamp'), true],
+            [dungeon({ opened: 1}), inventory('book boots glove firerod'), true],
+            [dungeon.initial, inventory('mirror mitt flute'), 'possible'],
+            [dungeon.initial, inventory('mirror mitt flute boots'), true],
+            [dungeon({ opened: 1}), inventory('mirror mitt flute boots lamp'), true],
+            [dungeon({ opened: 1}), inventory('mirror mitt flute boots firerod'), true],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                dungeon.update(model, 'desert');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.desert.progressable.should.equal(state);
             }));
 
         });

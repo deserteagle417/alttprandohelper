@@ -50,6 +50,12 @@
                     eastern: {
                         completable: world.eastern.can_complete({ items }),
                         progressable: world.eastern.can_progress({ items, region: world.eastern })
+                    },
+                    desert: {
+                        completable: (state = region_state(world.desert, { items })) &&
+                            derive_state(state, world.desert.can_complete({ items })),
+                        progressable: (state = region_state(world.desert, { items, region: world.desert })) &&
+                            derive_state(state, world.desert.can_progress({ items, region: world.desert }))
                     }
                 }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
