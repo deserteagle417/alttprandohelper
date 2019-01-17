@@ -10,9 +10,9 @@
     }
 }(typeof self !== 'undefined' ? self : this, function(create_items, create_world, update, _) {
     const open_mode_setting = {};
-    const world = create_world(open_mode_setting).world;
 
     const create_model = () => {
+        let world = create_world(open_mode_setting).world;
         let items = create_items().items;
         return {
             state() {
@@ -46,7 +46,12 @@
                     location === true ? region :
                     location;
                 let state;
-                return { lightworld: {
+                return { dungeons: {
+                    eastern: {
+                        completable: world.eastern.can_complete({ items }),
+                        progressable: world.eastern.can_progress({ items, region: world.eastern })
+                    }
+                }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
                         (state = region_state(lightworld_deathmountain_west, { items, world })) &&
                             derive_state(state, !location.can_access || location.can_access({ items, world }))),
@@ -84,6 +89,13 @@
                 const modulo = max-min+1;
                 const value = (items[name]-min + modulo + delta) % modulo + min;
                 items = update(items, { [name]: { $set: value } });
+            },
+            lower_chest(region) {
+                const { chests, chest_limit } = world[region];
+                const delta = -1;
+                const modulo = chest_limit + 1;
+                const value = (chests + modulo + delta) % modulo;
+                world = update(world, { [region]: { chests: { $set: value } } });
             }
         }
     };

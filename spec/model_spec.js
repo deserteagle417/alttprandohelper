@@ -8,11 +8,27 @@ chai.should();
 
 const create_model = require('../src/model');
 
-const inventory = (tokens) => {
-    tokens = tokens.split(' ');
+const dungeon = ({ opened = 0 }) => {
+    return {
+        update(model, region) {
+            _.times(opened, () => model.lower_chest(region));
+        },
+        toString() {
+            return opened ?
+                `dungeon with ${opened} opened chests` :
+                'initial dungeon';
+        }
+    }
+};
+
+dungeon.initial = dungeon({});
+
+const inventory = (tokens = null) => {
+    tokens = tokens ? tokens.split(' ') : [];
     return {
         update(model) {
             const raise = {
+                bow: ['bow', 2],
                 bottle: ['bottle', 1],
                 glove: ['glove', 1],
                 mitt: ['glove', 2]
@@ -26,10 +42,19 @@ const inventory = (tokens) => {
             });
         },
         toString() {
-            return tokens.join(', ');
+            return tokens.length ?
+                `with ${tokens.join(', ')}` :
+                'without any items';
         }
     }
 };
+
+inventory.none = inventory();
+
+const as = state => `as ${
+    state === true ? 'available' :
+    state === false ? 'unavailable' :
+    state}`;
 
 describe('Model', () => {
 
@@ -37,6 +62,37 @@ describe('Model', () => {
 
     beforeEach(() => {
         model = create_model();
+    });
+
+    context('dungeons', () => {
+
+        context('eastern palace', () => {
+
+            with_cases(
+            [inventory.none, false],
+            [inventory('bow'), 'dark'],
+            [inventory('lamp bow'), true],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.eastern.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [dungeon.initial, inventory.none, true],
+            [dungeon({ opened: 1 }), inventory.none, 'possible'],
+            [dungeon({ opened: 2 }), inventory.none, 'possible'],
+            [dungeon({ opened: 1 }), inventory('lamp'), true],
+            [dungeon({ opened: 2 }), inventory('lamp bow'), true],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                dungeon.update(model, 'eastern');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.eastern.progressable.should.equal(state);
+            }));
+
+        });
+        
     });
 
     context('lightworld locations', () => {
@@ -110,7 +166,7 @@ describe('Model', () => {
         ['lightworld_deathmountain_east', 'island_dm', inventory('glove hookshot')],
         ['lightworld_deathmountain_east', 'island_dm', inventory('flute hookshot')],
         ['lightworld_northeast', 'river', inventory('glove')],
-        (region, name, inventory) => it(`shows ${region} - ${name} as viewable with ${inventory}`, () => {
+        (region, name, inventory) => it(`shows ${region} - ${name} as viewable ${inventory}`, () => {
             inventory.update(model);
             const actual = model.state();
             actual.lightworld[name].should.equal('viewable');
@@ -127,7 +183,7 @@ describe('Model', () => {
         ['lightworld_deathmountain_east', 'spiral', inventory('glove hookshot')],
         ['lightworld_deathmountain_east', 'paradox', inventory('glove hammer mirror')],
         ['lightworld_deathmountain_east', 'paradox', inventory('glove hookshot')],
-        (region, name, inventory) => it(`shows ${region} - ${name} as dark with ${inventory}`, () => {
+        (region, name, inventory) => it(`shows ${region} - ${name} as dark ${inventory}`, () => {
             inventory.update(model);
             const actual = model.state();
             actual.lightworld[name].should.equal('dark');
@@ -162,7 +218,7 @@ describe('Model', () => {
         ['lightworld_south', 'library', inventory('boots')],
         ['lightworld_south', 'grove_n', inventory('shovel')],
         ['lightworld_south', 'hobo', inventory('flippers')],
-        (region, name, inventory) => it(`shows ${region} - ${name} as available with ${inventory}`, () => {
+        (region, name, inventory) => it(`shows ${region} - ${name} as available ${inventory}`, () => {
             inventory.update(model);
             const actual = model.state();
             actual.lightworld[name].should.be.true;
