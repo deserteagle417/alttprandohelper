@@ -80,6 +80,12 @@
                             derive_state(state, world.skull.can_complete({ items, world })),
                         progressable: (state = region_state(world.skull, { items, world, region: world.skull })) &&
                             derive_state(state, world.skull.can_progress({ items, world, region: world.skull }))
+                    },
+                    thieves: {
+                        completable: (state = region_state(world.thieves, { items, world })) &&
+                            derive_state(state, world.thieves.can_complete({ items, world })),
+                        progressable: (state = region_state(world.thieves, { items, world, region: world.thieves })) &&
+                            derive_state(state, world.thieves.can_progress({ items, world, region: world.thieves }))
                     }
                 }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
