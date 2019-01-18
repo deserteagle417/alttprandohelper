@@ -242,6 +242,45 @@ describe('Model', () => {
             }));
 
         });
+
+        context('swamp palace', () => {
+
+            with_cases(
+            [false, inventory.none, false],
+            [false, inventory('hammer hookshot'), false],
+            [false, inventory('moonpearl mirror flippers glove hammer hookshot'), true],
+            [true, inventory('moonpearl mirror flippers hammer hookshot'), true],
+            (agahnim, inventory, state) => it(`show completable ${as(state)} ${inventory}${defeated(agahnim)}`, () => {
+                agahnim && model.toggle_completion('castle_tower');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.swamp.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [false, dungeon.initial, inventory.none, false],
+            [false, dungeon.initial, inventory('hammer'), false],
+            [false, dungeon.initial, inventory('moonpearl mirror flippers glove hammer'), true],
+            [false, dungeon.initial, inventory('moonpearl mirror flippers mitt'), 'possible'],
+            [false, dungeon({ opened: 1 }), inventory('moonpearl mirror flippers glove hammer'), true],
+            [false, dungeon({ opened: 2 }), inventory('moonpearl mirror flippers glove hammer hookshot'), true],
+            [false, dungeon({ opened: 2 }), inventory('moonpearl mirror flippers glove hammer'), 'possible'],
+            [false, dungeon({ opened: 4 }), inventory('moonpearl mirror flippers glove hammer hookshot'), true],
+            [true, dungeon.initial, inventory('moonpearl mirror flippers hammer'), true],
+            [true, dungeon.initial, inventory('moonpearl mirror flippers hookshot'), 'possible'],
+            [true, dungeon({ opened: 1 }), inventory('moonpearl mirror flippers hammer'), true],
+            [true, dungeon({ opened: 2 }), inventory('moonpearl mirror flippers hammer hookshot'), true],
+            [true, dungeon({ opened: 2 }), inventory('moonpearl mirror flippers hammer'), 'possible'],
+            [true, dungeon({ opened: 4 }), inventory('moonpearl mirror flippers hammer hookshot'), true],
+            (agahnim, dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}${defeated(agahnim)}`, () => {
+                agahnim && model.toggle_completion('castle_tower');
+                dungeon.update(model, 'swamp');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.swamp.progressable.should.equal(state);
+            }));
+
+        });
         
     });
 
