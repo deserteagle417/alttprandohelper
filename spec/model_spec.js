@@ -372,6 +372,38 @@ describe('Model', () => {
 
         });
 
+        context('ice palace', () => {
+
+            with_cases(
+            [inventory.none, false],
+            [inventory('hammer somaria'), false],
+            [inventory('moonpearl flippers mitt firerod hammer somaria'), true],
+            [inventory('moonpearl flippers mitt firerod hammer hookshot'), true],
+            [inventory('moonpearl flippers mitt firerod hammer'), 'possible'],
+            [inventory('moonpearl flippers mitt bombos fightersword hammer somaria'), true],
+            [inventory('moonpearl flippers mitt bombos fightersword hammer hookshot'), true],
+            [inventory('moonpearl flippers mitt bombos fightersword hammer'), 'possible'],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.ice.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [inventory.none, false],
+            [inventory('hammer'), false],
+            [inventory('moonpearl flippers mitt firerod hammer'), true],
+            [inventory('moonpearl flippers mitt firerod'), 'possible'],
+            [inventory('moonpearl flippers mitt bombos fightersword hammer'), true],
+            [inventory('moonpearl flippers mitt bombos fightersword'), 'possible'],
+            (inventory, state) => it(`shows progressable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.ice.progressable.should.equal(state);
+            }));
+
+        });
+
     });
 
     context('lightworld locations', () => {
