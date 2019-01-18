@@ -281,7 +281,51 @@ describe('Model', () => {
             }));
 
         });
-        
+
+        context('skull woods', () => {
+
+            with_cases(
+            [false, inventory.none, false],
+            [false, inventory('firerod fightersword'), false],
+            [false, inventory('moonpearl glove hammer firerod fightersword'), true],
+            [true, inventory('moonpearl hookshot flippers firerod fightersword'), true],
+            [true, inventory('moonpearl hookshot glove firerod fightersword'), true],
+            [true, inventory('moonpearl hookshot hammer firerod fightersword'), true],
+            (agahnim, inventory, state) => it(`show completable ${as(state)} ${inventory}${defeated(agahnim)}`, () => {
+                agahnim && model.toggle_completion('castle_tower');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.skull.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [false, dungeon.initial, inventory.none, false],
+            [false, dungeon.initial, inventory('firerod'), false],
+            [false, dungeon.initial, inventory('moonpearl glove hammer firerod'), true],
+            [false, dungeon.initial, inventory('moonpearl mitt firerod'), true],
+            [false, dungeon({ opened: 1 }), inventory('moonpearl glove hammer firerod fightersword'), true],
+            [false, dungeon({ opened: 1 }), inventory('moonpearl mitt firerod fightersword'), true],
+            [false, dungeon({ opened: 1 }), inventory('moonpearl glove hammer'), 'possible'],
+            [false, dungeon({ opened: 1 }), inventory('moonpearl mitt'), 'possible'],
+            [true, dungeon.initial, inventory('moonpearl hookshot flippers firerod'), true],
+            [true, dungeon.initial, inventory('moonpearl hookshot glove firerod'), true],
+            [true, dungeon.initial, inventory('moonpearl hookshot hammer firerod'), true],
+            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot flippers firerod fightersword'), true],
+            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot glove firerod fightersword'), true],
+            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot hammer firerod fightersword'), true],
+            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot flippers'), 'possible'],
+            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot glove'), 'possible'],
+            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot hammer'), 'possible'],
+            (agahnim, dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}${defeated(agahnim)}`, () => {
+                agahnim && model.toggle_completion('castle_tower');
+                dungeon.update(model, 'skull');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.skull.progressable.should.equal(state);
+            }));
+
+        });
+
     });
 
     context('lightworld locations', () => {

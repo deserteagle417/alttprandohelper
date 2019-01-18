@@ -74,6 +74,12 @@
                             derive_state(state, world.swamp.can_complete({ items, world })),
                         progressable: (state = region_state(world.swamp, { items, world, region: world.swamp })) &&
                             derive_state(state, world.swamp.can_progress({ items, world, region: world.swamp }))
+                    },
+                    skull: {
+                        completable: (state = region_state(world.skull, { items, world })) &&
+                            derive_state(state, world.skull.can_complete({ items, world })),
+                        progressable: (state = region_state(world.skull, { items, world, region: world.skull })) &&
+                            derive_state(state, world.skull.can_progress({ items, world, region: world.skull }))
                     }
                 }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
