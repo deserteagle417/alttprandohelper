@@ -92,6 +92,12 @@
                             derive_state(state, world.ice.can_complete({ items })),
                         progressable: (state = region_state(world.ice, { items })) &&
                             derive_state(state, world.ice.can_progress({ items }))
+                    },
+                    mire: {
+                        completable: (state = region_state(world.mire, { items, world, region: world.mire })) &&
+                            derive_state(state, world.mire.can_complete({ items, world, region: world.mire })),
+                        progressable: (state = region_state(world.mire, { items, world, region: world.mire })) &&
+                            derive_state(state, world.mire.can_progress({ items, world, region: world.mire }))
                     }
                 }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
@@ -134,6 +140,15 @@
             },
             toggle_completion(region) {
                 world = update(world, { [region]: update.toggle('completed') });
+            },
+            raise_medallion(region) {
+                const medallion_order = ['unknown', 'bombos', 'ether', 'quake'];
+                const medallion = world[region].medallion;
+                const delta = 1;
+                const modulo = medallion_order.length;
+                const index = medallion_order.indexOf(medallion);
+                const value = medallion_order[(index + modulo + delta) % modulo];
+                world = update(world, { [region]: { medallion: { $set: value } } });
             },
             lower_chest(region) {
                 const { chests, chest_limit } = world[region];

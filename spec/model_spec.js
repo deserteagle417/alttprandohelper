@@ -8,14 +8,19 @@ chai.should();
 
 const create_model = require('../src/model');
 
-const dungeon = ({ opened = 0 }) => {
+const dungeon = ({ opened = 0, medallion = 0 }) => {
     return {
         update(model, region) {
             _.times(opened, () => model.lower_chest(region));
+            _.times(medallion, () => model.raise_medallion(region));
         },
         toString() {
-            return opened ?
-                `dungeon with ${opened} opened chests` :
+            const parts = _.compact([
+                medallion && `medallion ${medallion}`,
+                opened && `${opened} opened chests`
+            ]);
+            return parts.length ?
+                `dungeon with ${parts.join(', ')}` :
                 'initial dungeon';
         }
     }
@@ -400,6 +405,52 @@ describe('Model', () => {
                 inventory.update(model);
                 const actual = model.state();
                 actual.dungeons.ice.progressable.should.equal(state);
+            }));
+
+        });
+
+        context('misery mire', () => {
+
+            with_cases(
+            [dungeon.initial, inventory.none, false],
+            [dungeon.initial, inventory('somaria bombos ether quake lamp'), false],
+            [dungeon.initial, inventory('moonpearl boots fightersword flute mitt somaria bombos ether quake lamp'), true],
+            [dungeon({ medallion: 1 }), inventory('moonpearl boots fightersword flute mitt somaria bombos lamp'), true],
+            [dungeon({ medallion: 2 }), inventory('moonpearl boots fightersword flute mitt somaria ether lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl boots fightersword flute mitt somaria quake lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl boots fightersword flute mitt somaria quake firerod'), 'dark'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl boots fightersword flute mitt somaria quake'), 'possible'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl hookshot fightersword flute mitt somaria quake lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl hookshot fightersword flute mitt somaria quake firerod'), 'dark'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl hookshot fightersword flute mitt somaria quake'), 'possible'],
+            (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                dungeon.update(model, 'mire');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.mire.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [dungeon.initial, inventory.none, false],
+            [dungeon.initial, inventory('bombos ether quake firerod'), false],
+            [dungeon.initial, inventory('moonpearl boots fightersword flute mitt bombos ether quake firerod'), true],
+            [dungeon({ medallion: 1 }), inventory('moonpearl boots fightersword flute mitt bombos firerod'), true],
+            [dungeon({ medallion: 2 }), inventory('moonpearl boots fightersword flute mitt ether firerod'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl boots fightersword flute mitt quake firerod'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl boots fightersword flute mitt quake lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl boots fightersword flute mitt quake'), 'possible'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl hookshot fightersword flute mitt quake firerod'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl hookshot fightersword flute mitt quake lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl hookshot fightersword flute mitt quake'), 'possible'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl boots fightersword flute mitt quake lamp somaria'), true],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl boots fightersword flute mitt quake'), 'possible'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl hookshot fightersword flute mitt quake lamp somaria'), true],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl hookshot fightersword flute mitt quake'), 'possible'],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                dungeon.update(model, 'mire');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.mire.progressable.should.equal(state);
             }));
 
         });
