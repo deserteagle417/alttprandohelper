@@ -12,7 +12,8 @@
     const open_mode_setting = {};
 
     const create_model = () => {
-        let world = create_world(open_mode_setting).world;
+        const mode = open_mode_setting;
+        let world = create_world(mode).world;
         let items = create_items().items;
         return {
             state() {
@@ -98,14 +99,20 @@
                             derive_state(state, world.mire.can_complete({ items, world, region: world.mire })),
                         progressable: (state = region_state(world.mire, { items, world, region: world.mire })) &&
                             derive_state(state, world.mire.can_progress({ items, world, region: world.mire }))
+                    },
+                    turtle: {
+                        completable: (state = region_state(world.turtle, { items, world, region: world.turtle })) &&
+                            derive_state(state, world.turtle.can_complete({ items, world, region: world.turtle })),
+                        progressable: (state = region_state(world.turtle, { items, world, region: world.turtle })) &&
+                            derive_state(state, world.turtle.can_progress({ items, world, region: world.turtle }))
                     }
                 }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
                         (state = region_state(lightworld_deathmountain_west, { items, world })) &&
                             derive_state(state, !location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(lightworld_deathmountain_east.locations, location =>
-                        (state = region_state(lightworld_deathmountain_east, { items, world })) &&
-                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(lightworld_deathmountain_east, { items, world, mode })) &&
+                            derive_state(state, !location.can_access || location.can_access({ items, world, mode }))),
                     ..._.mapValues(lightworld_northwest.locations, location =>
                         !have_lightworld_northwest_can_enter && (!location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(lightworld_northeast.locations, location =>

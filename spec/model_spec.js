@@ -34,6 +34,7 @@ const inventory = (tokens = null) => {
         update(model) {
             const raise = {
                 fightersword: ['sword', 1],
+                mirrorshield: ['shield', 3],
                 bow: ['bow', 2],
                 bottle: ['bottle', 1],
                 glove: ['glove', 1],
@@ -451,6 +452,102 @@ describe('Model', () => {
                 inventory.update(model);
                 const actual = model.state();
                 actual.dungeons.mire.progressable.should.equal(state);
+            }));
+
+        });
+
+        context('turtle rock', () => {
+
+            with_cases(
+            [dungeon.initial, inventory.none, false],
+            [dungeon.initial, inventory('icerod firerod bombos ether quake byrna lamp'), false],
+            [dungeon.initial, inventory('moonpearl mitt hammer somaria fightersword mirror icerod firerod bombos ether quake byrna lamp'), true],
+            [dungeon({ medallion: 1 }), inventory('moonpearl mitt hammer somaria fightersword mirror icerod firerod bombos byrna lamp'), true],
+            [dungeon({ medallion: 2 }), inventory('moonpearl mitt hammer somaria fightersword mirror icerod firerod ether byrna lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror icerod firerod quake byrna lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror icerod firerod quake byrna'), 'dark'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror icerod firerod quake cape lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror icerod firerod quake cape'), 'dark'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror icerod firerod quake mirrorshield lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror icerod firerod quake mirrorshield'), 'dark'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror icerod firerod quake'), 'possible'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot icerod firerod quake byrna lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot icerod firerod quake byrna'), 'dark'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot icerod firerod quake cape lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot icerod firerod quake cape'), 'dark'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot icerod firerod quake mirrorshield lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot icerod firerod quake mirrorshield'), 'dark'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot icerod firerod quake'), 'possible'],
+            (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                dungeon.update(model, 'turtle');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.turtle.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [dungeon.initial, inventory.none, false],
+            [dungeon.initial, inventory('bombos ether quake firerod lamp'), false],
+            [dungeon.initial, inventory('moonpearl mitt hammer somaria fightersword mirror bombos ether quake firerod lamp'), true],
+            [dungeon({ medallion: 1 }), inventory('moonpearl mitt hammer somaria fightersword mirror bombos firerod lamp'), true],
+            [dungeon({ medallion: 2 }), inventory('moonpearl mitt hammer somaria fightersword mirror ether firerod lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake firerod lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake'), 'possible'],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake byrna firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake byrna'), 'possible'],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake cape firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake cape'), 'possible'],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake mirrorshield firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake mirrorshield'), 'possible'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake byrna firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake byrna firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake byrna'), 'possible'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake cape firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake cape firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake cape'), 'possible'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake mirrorshield firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake mirrorshield firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake mirrorshield'), 'possible'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake byrna icerod firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake byrna icerod firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake byrna'), 'possible'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake cape icerod firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake cape icerod firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake cape'), 'possible'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake mirrorshield icerod firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake mirrorshield icerod firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword mirror quake mirrorshield'), 'possible'],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake firerod lamp'), true],
+            [dungeon({ medallion: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake'), 'possible'],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake byrna firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake byrna'), 'possible'],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake cape firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake cape'), 'possible'],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake mirrorshield firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 1 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake mirrorshield'), 'possible'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake byrna firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake byrna firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake byrna'), 'possible'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake cape firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake cape firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake cape'), 'possible'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake mirrorshield firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake mirrorshield firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 3 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake mirrorshield'), 'possible'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake byrna icerod firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake byrna icerod firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake byrna'), 'possible'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake cape icerod firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake cape icerod firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake cape'), 'possible'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake mirrorshield icerod firerod lamp'), true],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake mirrorshield icerod firerod'), 'dark'],
+            [dungeon({ medallion: 3, opened: 4 }), inventory('moonpearl mitt hammer somaria fightersword hookshot quake mirrorshield'), 'possible'],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                dungeon.update(model, 'turtle');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.turtle.progressable.should.equal(state);
             }));
 
         });
