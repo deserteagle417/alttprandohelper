@@ -557,130 +557,98 @@ describe('Model', () => {
     context('lightworld locations', () => {
 
         with_cases(
-        ['lightworld_deathmountain_west', 'ether'],
-        ['lightworld_deathmountain_west', 'spectacle_rock'],
-        ['lightworld_deathmountain_west', 'spectacle_cave'],
-        ['lightworld_deathmountain_west', 'old_man'],
-        ['lightworld_deathmountain_east', 'island_dm'],
-        ['lightworld_deathmountain_east', 'spiral'],
-        ['lightworld_deathmountain_east', 'paradox'],
-        ['lightworld_deathmountain_east', 'mimic'],
-        ['lightworld_northwest', 'altar'],
-        ['lightworld_northwest', 'graveyard_w'],
-        ['lightworld_northwest', 'graveyard_n'],
-        ['lightworld_northwest', 'graveyard_e'],
-        ['lightworld_northwest', 'kid'],
-        ['lightworld_northwest', 'frog'],
-        ['lightworld_northwest', 'bat'],
-        ['lightworld_northeast', 'zora'],
-        ['lightworld_northeast', 'river'],
-        ['lightworld_northeast', 'fairy_lw'],
-        ['lightworld_northeast', 'witch'],
-        ['lightworld_northeast', 'sahasrahla'],
-        ['lightworld_south', 'grove_n'],
-        ['lightworld_south', 'grove_s'],
-        ['lightworld_south', 'desert_ne'],
-        ['lightworld_south', 'bombos'],
-        ['lightworld_south', 'hobo'],
-        (region, name) => it(`shows ${region} - ${name} as unavailable without any items`, () => {
-            const actual = model.state();
-            actual.lightworld[name].should.be.false;
-        }));
-
-        with_cases(
-        ['lightworld_northwest', 'tree'],
-        ['lightworld_south', 'library'],
-        ['lightworld_south', 'desert_w'],
-        ['lightworld_south', 'island_lake'],
-        (region, name) => it(`shows ${region} - ${name} as viewable without any items`, () => {
-            const actual = model.state();
-            actual.lightworld[name].should.equal('viewable');
-        }));
-
-        with_cases(
-        ['lightworld_northwest', 'mushroom'],
-        ['lightworld_northwest', 'hideout'],
-        ['lightworld_northwest', 'well'],
-        ['lightworld_northwest', 'thief_hut'],
-        ['lightworld_northwest', 'bottle'],
-        ['lightworld_northwest', 'chicken'],
-        ['lightworld_northwest', 'tavern'],
-        ['lightworld_northeast', 'sahasrahla_hut'],
-        ['lightworld_south', 'maze'],
-        ['lightworld_south', 'link_house'],
-        ['lightworld_south', 'aginah'],
-        ['lightworld_south', 'dam'],
-        ['lightworld_south', 'lake_sw'],
-        ['lightworld_south', 'ice_cave'],
-        (region, name) => it(`shows ${region} - ${name} as available without any items`, () => {
-            const actual = model.state();
-            actual.lightworld[name].should.be.true;
-        }));
-
-        with_cases(
-        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('glove')],
-        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('flute')],
-        ['lightworld_deathmountain_east', 'island_dm', inventory('glove mirror hammer')],
-        ['lightworld_deathmountain_east', 'island_dm', inventory('flute mirror hammer')],
-        ['lightworld_deathmountain_east', 'island_dm', inventory('glove hookshot')],
-        ['lightworld_deathmountain_east', 'island_dm', inventory('flute hookshot')],
-        ['lightworld_northeast', 'river', inventory('glove')],
-        (region, name, inventory) => it(`shows ${region} - ${name} as viewable ${inventory}`, () => {
+        ['lightworld_deathmountain_west', 'ether', inventory.none, false],
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory.none, false],
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('flute mirror'), true],
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('flute'), 'viewable'],
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('glove lamp mirror'), true],
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('glove'), 'viewable'],
+        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('glove mirror'), 'dark'],
+        ['lightworld_deathmountain_west', 'spectacle_cave', inventory.none, false],
+        ['lightworld_deathmountain_west', 'spectacle_cave', inventory('flute'), true],
+        ['lightworld_deathmountain_west', 'spectacle_cave', inventory('glove lamp'), true],
+        ['lightworld_deathmountain_west', 'spectacle_cave', inventory('glove'), 'dark'],
+        ['lightworld_deathmountain_west', 'old_man', inventory.none, false],
+        ['lightworld_deathmountain_west', 'old_man', inventory('flute lamp'), true],
+        ['lightworld_deathmountain_west', 'old_man', inventory('flute'), 'dark'],
+        ['lightworld_deathmountain_west', 'old_man', inventory('glove lamp'), true],
+        ['lightworld_deathmountain_west', 'old_man', inventory('glove'), 'dark'],
+        ['lightworld_deathmountain_east', 'island_dm', inventory.none, false],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('flute hammer mitt moonpearl mirror'), true],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('flute hookshot mitt moonpearl mirror'), true],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('flute mirror hammer'), 'viewable'],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('flute hookshot'), 'viewable'],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('lamp hammer mitt moonpearl mirror'), true],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('lamp hookshot mitt moonpearl mirror'), true],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('glove mirror hammer'), 'viewable'],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('glove hookshot'), 'viewable'],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('hammer mitt moonpearl mirror'), 'dark'],
+        ['lightworld_deathmountain_east', 'island_dm', inventory('hookshot mitt moonpearl mirror'), 'dark'],
+        ['lightworld_deathmountain_east', 'spiral', inventory.none, false],
+        ['lightworld_deathmountain_east', 'spiral', inventory('flute hammer mirror'), true],
+        ['lightworld_deathmountain_east', 'spiral', inventory('flute hookshot'), true],
+        ['lightworld_deathmountain_east', 'spiral', inventory('glove lamp hammer mirror'), true],
+        ['lightworld_deathmountain_east', 'spiral', inventory('glove lamp hookshot'), true],
+        ['lightworld_deathmountain_east', 'spiral', inventory('glove hammer mirror'), 'dark'],
+        ['lightworld_deathmountain_east', 'spiral', inventory('glove hookshot'), 'dark'],
+        ['lightworld_deathmountain_east', 'paradox', inventory.none, false],
+        ['lightworld_deathmountain_east', 'paradox', inventory('flute hammer mirror'), true],
+        ['lightworld_deathmountain_east', 'paradox', inventory('flute hookshot'), true],
+        ['lightworld_deathmountain_east', 'paradox', inventory('glove lamp hammer mirror'), true],
+        ['lightworld_deathmountain_east', 'paradox', inventory('glove lamp hookshot'), true],
+        ['lightworld_deathmountain_east', 'paradox', inventory('glove hammer mirror'), 'dark'],
+        ['lightworld_deathmountain_east', 'paradox', inventory('glove hookshot'), 'dark'],
+        ['lightworld_deathmountain_east', 'mimic', inventory.none, false],
+        ['lightworld_northwest', 'altar', inventory.none, false],
+        ['lightworld_northwest', 'mushroom', inventory.none, true],
+        ['lightworld_northwest', 'hideout', inventory.none, true],
+        ['lightworld_northwest', 'tree', inventory.none, 'viewable'],
+        ['lightworld_northwest', 'graveyard_w', inventory.none, false],
+        ['lightworld_northwest', 'graveyard_w', inventory('boots'), true],
+        ['lightworld_northwest', 'graveyard_n', inventory.none, false],
+        ['lightworld_northwest', 'graveyard_e', inventory.none, false],
+        ['lightworld_northwest', 'well', inventory.none, true],
+        ['lightworld_northwest', 'thief_hut', inventory.none, true],
+        ['lightworld_northwest', 'bottle', inventory.none, true],
+        ['lightworld_northwest', 'chicken', inventory.none, true],
+        ['lightworld_northwest', 'kid', inventory.none, false],
+        ['lightworld_northwest', 'kid', inventory('bottle'), true],
+        ['lightworld_northwest', 'tavern', inventory.none, true],
+        ['lightworld_northwest', 'frog', inventory.none, false],
+        ['lightworld_northwest', 'bat', inventory.none, false],
+        ['lightworld_northeast', 'zora', inventory.none, false],
+        ['lightworld_northeast', 'zora', inventory('flippers'), true],
+        ['lightworld_northeast', 'zora', inventory('glove'), true],
+        ['lightworld_northeast', 'river', inventory.none, false],
+        ['lightworld_northeast', 'river', inventory('flippers'), true],
+        ['lightworld_northeast', 'river', inventory('glove'), 'viewable'],
+        ['lightworld_northeast', 'fairy_lw', inventory.none, false],
+        ['lightworld_northeast', 'fairy_lw', inventory('flippers'), true],
+        ['lightworld_northeast', 'witch', inventory.none, false],
+        ['lightworld_northeast', 'witch', inventory('mushroom'), true],
+        ['lightworld_northeast', 'sahasrahla_hut', inventory.none, true],
+        ['lightworld_northeast', 'sahasrahla', inventory.none, false],
+        ['lightworld_south', 'maze', inventory.none, true],
+        ['lightworld_south', 'library', inventory.none, 'viewable'],
+        ['lightworld_south', 'library', inventory('boots'), true],
+        ['lightworld_south', 'grove_n', inventory.none, false],
+        ['lightworld_south', 'grove_n', inventory('shovel'), true],
+        ['lightworld_south', 'grove_s', inventory.none, false],
+        ['lightworld_south', 'link_house', inventory.none, true],
+        ['lightworld_south', 'desert_w', inventory.none, 'viewable'],
+        ['lightworld_south', 'desert_ne', inventory.none, false],
+        ['lightworld_south', 'aginah', inventory.none, true],
+        ['lightworld_south', 'bombos', inventory.none, false],
+        ['lightworld_south', 'dam', inventory.none, true],
+        ['lightworld_south', 'lake_sw', inventory.none, true],
+        ['lightworld_south', 'island_lake', inventory.none, 'viewable'],
+        ['lightworld_south', 'hobo', inventory.none, false],
+        ['lightworld_south', 'hobo', inventory('flippers'), true],
+        ['lightworld_south', 'ice_cave', inventory.none, true],
+        (region, name, inventory, state) => it(`shows ${region} - ${name} ${as(state)} ${inventory}`, () => {
             inventory.update(model);
             const actual = model.state();
-            actual.lightworld[name].should.equal('viewable');
-        }));
-
-        with_cases(
-        ['lightworld_deathmountain_west', 'old_man', inventory('glove')],
-        ['lightworld_deathmountain_west', 'old_man', inventory('flute')],
-        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('glove mirror')],
-        ['lightworld_deathmountain_west', 'spectacle_cave', inventory('glove')],
-        ['lightworld_deathmountain_east', 'island_dm', inventory('hammer mitt moonpearl mirror')],
-        ['lightworld_deathmountain_east', 'island_dm', inventory('hookshot mitt moonpearl mirror')],
-        ['lightworld_deathmountain_east', 'spiral', inventory('glove mirror hammer')],
-        ['lightworld_deathmountain_east', 'spiral', inventory('glove hookshot')],
-        ['lightworld_deathmountain_east', 'paradox', inventory('glove hammer mirror')],
-        ['lightworld_deathmountain_east', 'paradox', inventory('glove hookshot')],
-        (region, name, inventory) => it(`shows ${region} - ${name} as dark ${inventory}`, () => {
-            inventory.update(model);
-            const actual = model.state();
-            actual.lightworld[name].should.equal('dark');
-        }));
-
-        with_cases(
-        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('glove lamp mirror')],
-        ['lightworld_deathmountain_west', 'spectacle_rock', inventory('flute mirror')],
-        ['lightworld_deathmountain_west', 'spectacle_cave', inventory('glove lamp')],
-        ['lightworld_deathmountain_west', 'spectacle_cave', inventory('flute')],
-        ['lightworld_deathmountain_west', 'old_man', inventory('glove lamp')],
-        ['lightworld_deathmountain_west', 'old_man', inventory('flute lamp')],
-        ['lightworld_deathmountain_east', 'island_dm', inventory('lamp hammer mitt moonpearl mirror')],
-        ['lightworld_deathmountain_east', 'island_dm', inventory('flute hammer mitt moonpearl mirror')],
-        ['lightworld_deathmountain_east', 'island_dm', inventory('lamp hookshot mitt moonpearl mirror')],
-        ['lightworld_deathmountain_east', 'island_dm', inventory('flute hookshot mitt moonpearl mirror')],
-        ['lightworld_deathmountain_east', 'spiral', inventory('glove lamp hammer mirror')],
-        ['lightworld_deathmountain_east', 'spiral', inventory('flute hammer mirror')],
-        ['lightworld_deathmountain_east', 'spiral', inventory('glove lamp hookshot')],
-        ['lightworld_deathmountain_east', 'spiral', inventory('flute hookshot')],
-        ['lightworld_deathmountain_east', 'paradox', inventory('glove lamp hammer mirror')],
-        ['lightworld_deathmountain_east', 'paradox', inventory('flute hammer mirror')],
-        ['lightworld_deathmountain_east', 'paradox', inventory('glove lamp hookshot')],
-        ['lightworld_deathmountain_east', 'paradox', inventory('flute hookshot')],
-        ['lightworld_northwest', 'graveyard_w', inventory('boots')],
-        ['lightworld_northwest', 'kid', inventory('bottle')],
-        ['lightworld_northeast', 'zora', inventory('flippers')],
-        ['lightworld_northeast', 'zora', inventory('glove')],
-        ['lightworld_northeast', 'river', inventory('flippers')],
-        ['lightworld_northeast', 'fairy_lw', inventory('flippers')],
-        ['lightworld_northeast', 'witch', inventory('mushroom')],
-        ['lightworld_south', 'library', inventory('boots')],
-        ['lightworld_south', 'grove_n', inventory('shovel')],
-        ['lightworld_south', 'hobo', inventory('flippers')],
-        (region, name, inventory) => it(`shows ${region} - ${name} as available ${inventory}`, () => {
-            inventory.update(model);
-            const actual = model.state();
-            actual.lightworld[name].should.be.true;
+            actual.lightworld[name].should.equal(state);
         }));
 
     });
@@ -688,26 +656,27 @@ describe('Model', () => {
     context('darkworld locations', () => {
 
         with_cases(
-        ['darkworld_deathmountain_west', 'spike'],
-        ['darkworld_deathmountain_east', 'rock_hook'],
-        ['darkworld_deathmountain_east', 'rock_boots'],
-        ['darkworld_deathmountain_east', 'bunny'],
-        ['darkworld_northwest', 'bumper'],
-        ['darkworld_northwest', 'chest_game'],
-        ['darkworld_northwest', 'c_house'],
-        ['darkworld_northwest', 'bomb_hut'],
-        ['darkworld_northwest', 'purple'],
-        ['darkworld_northwest', 'pegs'],
-        ['darkworld_northeast', 'catfish'],
-        ['darkworld_northeast', 'pyramid'],
-        ['darkworld_northeast', 'fairy_dw'],
-        ['darkworld_south', 'dig_game'],
-        ['darkworld_south', 'stumpy'],
-        ['darkworld_south', 'swamp_ne'],
-        ['darkworld_mire', 'mire_w'],
-        (region, name) => it(`shows ${region} - ${name} as unavailable without any items`, () => {
+        ['darkworld_deathmountain_west', 'spike', inventory.none, false],
+        ['darkworld_deathmountain_east', 'rock_hook', inventory.none, false],
+        ['darkworld_deathmountain_east', 'rock_boots', inventory.none, false],
+        ['darkworld_deathmountain_east', 'bunny', inventory.none, false],
+        ['darkworld_northwest', 'bumper', inventory.none, false],
+        ['darkworld_northwest', 'chest_game', inventory.none, false],
+        ['darkworld_northwest', 'c_house', inventory.none, false],
+        ['darkworld_northwest', 'bomb_hut', inventory.none, false],
+        ['darkworld_northwest', 'purple', inventory.none, false],
+        ['darkworld_northwest', 'pegs', inventory.none, false],
+        ['darkworld_northeast', 'catfish', inventory.none, false],
+        ['darkworld_northeast', 'pyramid', inventory.none, false],
+        ['darkworld_northeast', 'fairy_dw', inventory.none, false],
+        ['darkworld_south', 'dig_game', inventory.none, false],
+        ['darkworld_south', 'stumpy', inventory.none, false],
+        ['darkworld_south', 'swamp_ne', inventory.none, false],
+        ['darkworld_mire', 'mire_w', inventory.none, false],
+        (region, name, inventory, state) => it(`shows ${region} - ${name} ${as(state)} ${inventory}`, () => {
+            inventory.update(model);
             const actual = model.state();
-            actual.darkworld[name].should.be.false;
+            actual.darkworld[name].should.equal(state);
         }));
 
     });
