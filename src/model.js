@@ -47,65 +47,21 @@
                     location === true ? region :
                     location;
                 let state;
+                const dungeon = (region, args) => ({
+                    completable: (state = region_state(region, args)) && derive_state(state, region.can_complete(args)),
+                    progressable: (state = region_state(region, args)) && derive_state(state, region.can_progress(args))
+                });
                 return { dungeons: {
-                    eastern: {
-                        completable: world.eastern.can_complete({ items }),
-                        progressable: world.eastern.can_progress({ items, region: world.eastern })
-                    },
-                    desert: {
-                        completable: (state = region_state(world.desert, { items })) &&
-                            derive_state(state, world.desert.can_complete({ items })),
-                        progressable: (state = region_state(world.desert, { items, region: world.desert })) &&
-                            derive_state(state, world.desert.can_progress({ items, region: world.desert }))
-                    },
-                    hera: {
-                        completable: (state = region_state(world.hera, { items, world })) &&
-                            derive_state(state, world.hera.can_complete({ items, world })),
-                        progressable: (state = region_state(world.hera, { items, world })) &&
-                            derive_state(state, world.hera.can_progress({ items, world }))
-                    },
-                    darkness: {
-                        completable: (state = region_state(world.darkness, { items, world })) &&
-                            derive_state(state, world.darkness.can_complete({ items, world })),
-                        progressable: (state = region_state(world.darkness, { items, world, region: world.darkness })) &&
-                            derive_state(state, world.darkness.can_progress({ items, world, region: world.darkness }))
-                    },
-                    swamp: {
-                        completable: (state = region_state(world.swamp, { items, world })) &&
-                            derive_state(state, world.swamp.can_complete({ items, world })),
-                        progressable: (state = region_state(world.swamp, { items, world, region: world.swamp })) &&
-                            derive_state(state, world.swamp.can_progress({ items, world, region: world.swamp }))
-                    },
-                    skull: {
-                        completable: (state = region_state(world.skull, { items, world })) &&
-                            derive_state(state, world.skull.can_complete({ items, world })),
-                        progressable: (state = region_state(world.skull, { items, world, region: world.skull })) &&
-                            derive_state(state, world.skull.can_progress({ items, world, region: world.skull }))
-                    },
-                    thieves: {
-                        completable: (state = region_state(world.thieves, { items, world })) &&
-                            derive_state(state, world.thieves.can_complete({ items, world })),
-                        progressable: (state = region_state(world.thieves, { items, world, region: world.thieves })) &&
-                            derive_state(state, world.thieves.can_progress({ items, world, region: world.thieves }))
-                    },
-                    ice: {
-                        completable: (state = region_state(world.ice, { items })) &&
-                            derive_state(state, world.ice.can_complete({ items })),
-                        progressable: (state = region_state(world.ice, { items })) &&
-                            derive_state(state, world.ice.can_progress({ items }))
-                    },
-                    mire: {
-                        completable: (state = region_state(world.mire, { items, world, region: world.mire })) &&
-                            derive_state(state, world.mire.can_complete({ items, world, region: world.mire })),
-                        progressable: (state = region_state(world.mire, { items, world, region: world.mire })) &&
-                            derive_state(state, world.mire.can_progress({ items, world, region: world.mire }))
-                    },
-                    turtle: {
-                        completable: (state = region_state(world.turtle, { items, world, region: world.turtle })) &&
-                            derive_state(state, world.turtle.can_complete({ items, world, region: world.turtle })),
-                        progressable: (state = region_state(world.turtle, { items, world, region: world.turtle })) &&
-                            derive_state(state, world.turtle.can_progress({ items, world, region: world.turtle }))
-                    }
+                    eastern: dungeon(world.eastern, { items, world, region: world.eastern}),
+                    desert: dungeon(world.desert, { items, world, region: world.desert}),
+                    hera: dungeon(world.hera, { items, world, region: world.hera}),
+                    darkness: dungeon(world.darkness, { items, world, region: world.darkness}),
+                    swamp: dungeon(world.swamp, { items, world, region: world.swamp}),
+                    skull: dungeon(world.skull, { items, world, region: world.skull}),
+                    thieves: dungeon(world.thieves, { items, world, region: world.thieves}),
+                    ice: dungeon(world.ice, { items, world, region: world.ice}),
+                    mire: dungeon(world.mire, { items, world, region: world.mire}),
+                    turtle: dungeon(world.turtle, { items, world, region: world.turtle})
                 }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
                         (state = region_state(lightworld_deathmountain_west, { items, world })) &&
