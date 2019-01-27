@@ -33,12 +33,6 @@
                 const have_lightworld_northwest_can_enter = !!lightworld_northwest.can_enter;
                 const have_lightworld_northeast_can_enter = !!lightworld_northeast.can_enter;
                 const have_lightworld_south_can_enter = !!lightworld_south.can_enter;
-                const have_darkworld_deathmountain_west_can_enter = !!darkworld_deathmountain_west.can_enter;
-                const have_darkworld_deathmountain_east_can_enter = !!darkworld_deathmountain_east.can_enter;
-                const have_darkworld_northwest_can_enter = !!darkworld_northwest.can_enter;
-                const have_darkworld_northeast_can_enter = !!darkworld_northeast.can_enter;
-                const have_darkworld_south_can_enter = !!darkworld_south.can_enter;
-                const have_darkworld_mire_can_enter = !!darkworld_mire.can_enter;
                 const region_state = (region, args) =>
                     !region.can_enter || region.can_enter(args) ||
                     !!region.can_enter_dark && region.can_enter_dark(args) && 'dark';
@@ -77,17 +71,23 @@
                         !have_lightworld_south_can_enter && (!location.can_access || location.can_access({ items, world })))
                 }, darkworld: {
                     ..._.mapValues(darkworld_deathmountain_west.locations, location =>
-                        !have_darkworld_deathmountain_west_can_enter && location.can_access),
+                        (state = region_state(darkworld_deathmountain_west, { items, world })) &&
+                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(darkworld_deathmountain_east.locations, location =>
-                        !have_darkworld_deathmountain_east_can_enter && location.can_access),
+                        (state = region_state(darkworld_deathmountain_east, { items, world })) &&
+                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(darkworld_northwest.locations, location =>
-                        !have_darkworld_northwest_can_enter && location.can_access),
+                        (state = region_state(darkworld_northwest, { items, world })) &&
+                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(darkworld_northeast.locations, location =>
-                        !have_darkworld_northeast_can_enter && location.can_access),
+                        (state = region_state(darkworld_northeast, { items, world })) &&
+                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(darkworld_south.locations, location =>
-                        !have_darkworld_south_can_enter && location.can_access),
+                        (state = region_state(darkworld_south, { items, world })) &&
+                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
                     ..._.mapValues(darkworld_mire.locations, location =>
-                        !have_darkworld_mire_can_enter && location.can_access)
+                        (state = region_state(darkworld_mire, { items, world })) &&
+                            derive_state(state, !location.can_access || location.can_access({ items, world })))
                 } };
             },
             toggle_item(name) {
