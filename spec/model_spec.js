@@ -64,8 +64,6 @@ const as = state => `as ${
     state === false ? 'unavailable' :
     state}`;
 
-const defeated = agahnim => agahnim ? ' and agahnim defeated' : '';
-
 describe('Model', () => {
 
     let model;
@@ -241,13 +239,20 @@ describe('Model', () => {
             });
 
             with_cases(
-            [false, inventory.none, false],
-            [false, inventory('moonpearl glove hammer bow lamp'), true],
-            [false, inventory('moonpearl glove hammer bow'), 'dark'],
-            [true, inventory('moonpearl bow hammer lamp'), true],
-            [true, inventory('moonpearl bow hammer'), 'dark'],
-            (agahnim, inventory, state) => it(`show completable ${as(state)} ${inventory}${defeated(agahnim)}`, () => {
-                agahnim && model.toggle_completion('castle_tower');
+            [inventory.none, false],
+            [inventory('moonpearl glove hammer bow lamp'), true],
+            [inventory('moonpearl glove hammer bow'), 'dark'],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.darkness.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [inventory('moonpearl bow hammer lamp'), true],
+            [inventory('moonpearl bow hammer'), 'dark'],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}, and agahnim defeated`, () => {
+                model.toggle_completion('castle_tower');
                 inventory.update(model);
                 const actual = model.state();
                 actual.dungeons.darkness.completable.should.equal(state);
@@ -260,18 +265,26 @@ describe('Model', () => {
             });
 
             with_cases(
-            [false, dungeon.initial, inventory.none, false],
-            [false, dungeon.initial, inventory('moonpearl glove hammer bow lamp'), true],
-            [false, dungeon.initial, inventory('moonpearl glove hammer'), 'possible'],
-            [false, dungeon({ opened: 4 }), inventory('moonpearl mitt flippers bow lamp hammer'), true],
-            [false, dungeon({ opened: 4 }), inventory('moonpearl mitt flippers bow lamp'), 'possible'],
-            [false, dungeon.initial, inventory('moonpearl mitt flippers'), 'possible'],
-            [true, dungeon.initial, inventory('moonpearl bow lamp'), true],
-            [true, dungeon.initial, inventory('moonpearl'), 'possible'],
-            [true, dungeon({ opened: 4 }), inventory('moonpearl bow lamp hammer'), true],
-            [true, dungeon({ opened: 4 }), inventory('moonpearl bow lamp'), 'possible'],
-            (agahnim, dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}${defeated(agahnim)}`, () => {
-                agahnim && model.toggle_completion('castle_tower');
+            [dungeon.initial, inventory.none, false],
+            [dungeon.initial, inventory('moonpearl glove hammer bow lamp'), true],
+            [dungeon.initial, inventory('moonpearl glove hammer'), 'possible'],
+            [dungeon({ opened: 4 }), inventory('moonpearl mitt flippers bow lamp hammer'), true],
+            [dungeon({ opened: 4 }), inventory('moonpearl mitt flippers bow lamp'), 'possible'],
+            [dungeon.initial, inventory('moonpearl mitt flippers'), 'possible'],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                dungeon.update(model, 'darkness');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.darkness.progressable.should.equal(state);
+            }));
+
+            with_cases(
+            [dungeon.initial, inventory('moonpearl bow lamp'), true],
+            [dungeon.initial, inventory('moonpearl'), 'possible'],
+            [dungeon({ opened: 4 }), inventory('moonpearl bow lamp hammer'), true],
+            [dungeon({ opened: 4 }), inventory('moonpearl bow lamp'), 'possible'],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}, and agahnim defeated`, () => {
+                model.toggle_completion('castle_tower');
                 dungeon.update(model, 'darkness');
                 inventory.update(model);
                 const actual = model.state();
@@ -289,11 +302,18 @@ describe('Model', () => {
             });
 
             with_cases(
-            [false, inventory.none, false],
-            [false, inventory('moonpearl mirror flippers glove hammer hookshot'), true],
-            [true, inventory('moonpearl mirror flippers hammer hookshot'), true],
-            (agahnim, inventory, state) => it(`show completable ${as(state)} ${inventory}${defeated(agahnim)}`, () => {
-                agahnim && model.toggle_completion('castle_tower');
+            [inventory.none, false],
+            [inventory('moonpearl mirror flippers glove hammer hookshot'), true],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.swamp.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [inventory('moonpearl mirror flippers hammer hookshot'), true],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}, and agahnim defeated`, () => {
+                model.toggle_completion('castle_tower');
                 inventory.update(model);
                 const actual = model.state();
                 actual.dungeons.swamp.completable.should.equal(state);
@@ -306,21 +326,29 @@ describe('Model', () => {
             });
 
             with_cases(
-            [false, dungeon.initial, inventory.none, false],
-            [false, dungeon.initial, inventory('moonpearl mirror flippers glove hammer'), true],
-            [false, dungeon.initial, inventory('moonpearl mirror flippers mitt'), 'possible'],
-            [false, dungeon({ opened: 1 }), inventory('moonpearl mirror flippers glove hammer'), true],
-            [false, dungeon({ opened: 2 }), inventory('moonpearl mirror flippers glove hammer hookshot'), true],
-            [false, dungeon({ opened: 2 }), inventory('moonpearl mirror flippers glove hammer'), 'possible'],
-            [false, dungeon({ opened: 4 }), inventory('moonpearl mirror flippers glove hammer hookshot'), true],
-            [true, dungeon.initial, inventory('moonpearl mirror flippers hammer'), true],
-            [true, dungeon.initial, inventory('moonpearl mirror flippers hookshot'), 'possible'],
-            [true, dungeon({ opened: 1 }), inventory('moonpearl mirror flippers hammer'), true],
-            [true, dungeon({ opened: 2 }), inventory('moonpearl mirror flippers hammer hookshot'), true],
-            [true, dungeon({ opened: 2 }), inventory('moonpearl mirror flippers hammer'), 'possible'],
-            [true, dungeon({ opened: 4 }), inventory('moonpearl mirror flippers hammer hookshot'), true],
-            (agahnim, dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}${defeated(agahnim)}`, () => {
-                agahnim && model.toggle_completion('castle_tower');
+            [dungeon.initial, inventory.none, false],
+            [dungeon.initial, inventory('moonpearl mirror flippers glove hammer'), true],
+            [dungeon.initial, inventory('moonpearl mirror flippers mitt'), 'possible'],
+            [dungeon({ opened: 1 }), inventory('moonpearl mirror flippers glove hammer'), true],
+            [dungeon({ opened: 2 }), inventory('moonpearl mirror flippers glove hammer hookshot'), true],
+            [dungeon({ opened: 2 }), inventory('moonpearl mirror flippers glove hammer'), 'possible'],
+            [dungeon({ opened: 4 }), inventory('moonpearl mirror flippers glove hammer hookshot'), true],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                dungeon.update(model, 'swamp');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.swamp.progressable.should.equal(state);
+            }));
+
+            with_cases(
+            [dungeon.initial, inventory('moonpearl mirror flippers hammer'), true],
+            [dungeon.initial, inventory('moonpearl mirror flippers hookshot'), 'possible'],
+            [dungeon({ opened: 1 }), inventory('moonpearl mirror flippers hammer'), true],
+            [dungeon({ opened: 2 }), inventory('moonpearl mirror flippers hammer hookshot'), true],
+            [dungeon({ opened: 2 }), inventory('moonpearl mirror flippers hammer'), 'possible'],
+            [dungeon({ opened: 4 }), inventory('moonpearl mirror flippers hammer hookshot'), true],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}, and agahnim defeated`, () => {
+                model.toggle_completion('castle_tower');
                 dungeon.update(model, 'swamp');
                 inventory.update(model);
                 const actual = model.state();
@@ -338,13 +366,20 @@ describe('Model', () => {
             });
 
             with_cases(
-            [false, inventory.none, false],
-            [false, inventory('moonpearl glove hammer firerod sword'), true],
-            [true, inventory('moonpearl hookshot flippers firerod sword'), true],
-            [true, inventory('moonpearl hookshot glove firerod sword'), true],
-            [true, inventory('moonpearl hookshot hammer firerod sword'), true],
-            (agahnim, inventory, state) => it(`show completable ${as(state)} ${inventory}${defeated(agahnim)}`, () => {
-                agahnim && model.toggle_completion('castle_tower');
+            [inventory.none, false],
+            [inventory('moonpearl glove hammer firerod sword'), true],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.skull.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [inventory('moonpearl hookshot flippers firerod sword'), true],
+            [inventory('moonpearl hookshot glove firerod sword'), true],
+            [inventory('moonpearl hookshot hammer firerod sword'), true],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}, and agahnim defeated`, () => {
+                model.toggle_completion('castle_tower');
                 inventory.update(model);
                 const actual = model.state();
                 actual.dungeons.skull.completable.should.equal(state);
@@ -357,24 +392,32 @@ describe('Model', () => {
             });
 
             with_cases(
-            [false, dungeon.initial, inventory.none, false],
-            [false, dungeon.initial, inventory('moonpearl glove hammer firerod'), true],
-            [false, dungeon.initial, inventory('moonpearl mitt firerod'), true],
-            [false, dungeon({ opened: 1 }), inventory('moonpearl glove hammer firerod sword'), true],
-            [false, dungeon({ opened: 1 }), inventory('moonpearl mitt firerod sword'), true],
-            [false, dungeon({ opened: 1 }), inventory('moonpearl glove hammer'), 'possible'],
-            [false, dungeon({ opened: 1 }), inventory('moonpearl mitt'), 'possible'],
-            [true, dungeon.initial, inventory('moonpearl hookshot flippers firerod'), true],
-            [true, dungeon.initial, inventory('moonpearl hookshot glove firerod'), true],
-            [true, dungeon.initial, inventory('moonpearl hookshot hammer firerod'), true],
-            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot flippers firerod sword'), true],
-            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot glove firerod sword'), true],
-            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot hammer firerod sword'), true],
-            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot flippers'), 'possible'],
-            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot glove'), 'possible'],
-            [true, dungeon({ opened: 1 }), inventory('moonpearl hookshot hammer'), 'possible'],
-            (agahnim, dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}${defeated(agahnim)}`, () => {
-                agahnim && model.toggle_completion('castle_tower');
+            [dungeon.initial, inventory.none, false],
+            [dungeon.initial, inventory('moonpearl glove hammer firerod'), true],
+            [dungeon.initial, inventory('moonpearl mitt firerod'), true],
+            [dungeon({ opened: 1 }), inventory('moonpearl glove hammer firerod sword'), true],
+            [dungeon({ opened: 1 }), inventory('moonpearl mitt firerod sword'), true],
+            [dungeon({ opened: 1 }), inventory('moonpearl glove hammer'), 'possible'],
+            [dungeon({ opened: 1 }), inventory('moonpearl mitt'), 'possible'],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                dungeon.update(model, 'skull');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.skull.progressable.should.equal(state);
+            }));
+
+            with_cases(
+            [dungeon.initial, inventory('moonpearl hookshot flippers firerod'), true],
+            [dungeon.initial, inventory('moonpearl hookshot glove firerod'), true],
+            [dungeon.initial, inventory('moonpearl hookshot hammer firerod'), true],
+            [dungeon({ opened: 1 }), inventory('moonpearl hookshot flippers firerod sword'), true],
+            [dungeon({ opened: 1 }), inventory('moonpearl hookshot glove firerod sword'), true],
+            [dungeon({ opened: 1 }), inventory('moonpearl hookshot hammer firerod sword'), true],
+            [dungeon({ opened: 1 }), inventory('moonpearl hookshot flippers'), 'possible'],
+            [dungeon({ opened: 1 }), inventory('moonpearl hookshot glove'), 'possible'],
+            [dungeon({ opened: 1 }), inventory('moonpearl hookshot hammer'), 'possible'],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}, and agahnim defeated`, () => {
+                model.toggle_completion('castle_tower');
                 dungeon.update(model, 'skull');
                 inventory.update(model);
                 const actual = model.state();
@@ -392,20 +435,27 @@ describe('Model', () => {
             });
 
             with_cases(
-            [false, inventory.none, false],
-            [false, inventory('moonpearl glove hammer'), true],
-            [false, inventory('moonpearl mitt sword'), true],
-            [false, inventory('moonpearl mitt somaria'), true],
-            [false, inventory('moonpearl mitt byrna'), true],
-            [true, inventory('moonpearl hookshot flippers sword'), true],
-            [true, inventory('moonpearl hookshot flippers somaria'), true],
-            [true, inventory('moonpearl hookshot flippers byrna'), true],
-            [true, inventory('moonpearl hookshot glove sword'), true],
-            [true, inventory('moonpearl hookshot glove somaria'), true],
-            [true, inventory('moonpearl hookshot glove byrna'), true],
-            [true, inventory('moonpearl hookshot hammer'), true],
-            (agahnim, inventory, state) => it(`show completable ${as(state)} ${inventory}${defeated(agahnim)}`, () => {
-                agahnim && model.toggle_completion('castle_tower');
+            [inventory.none, false],
+            [inventory('moonpearl glove hammer'), true],
+            [inventory('moonpearl mitt sword'), true],
+            [inventory('moonpearl mitt somaria'), true],
+            [inventory('moonpearl mitt byrna'), true],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.thieves.completable.should.equal(state);
+            }));
+
+            with_cases(
+            [inventory('moonpearl hookshot flippers sword'), true],
+            [inventory('moonpearl hookshot flippers somaria'), true],
+            [inventory('moonpearl hookshot flippers byrna'), true],
+            [inventory('moonpearl hookshot glove sword'), true],
+            [inventory('moonpearl hookshot glove somaria'), true],
+            [inventory('moonpearl hookshot glove byrna'), true],
+            [inventory('moonpearl hookshot hammer'), true],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}, and agahnim defeated`, () => {
+                model.toggle_completion('castle_tower');
                 inventory.update(model);
                 const actual = model.state();
                 actual.dungeons.thieves.completable.should.equal(state);
@@ -418,19 +468,27 @@ describe('Model', () => {
             });
 
             with_cases(
-            [false, dungeon.initial, inventory.none, false],
-            [false, dungeon.initial, inventory('moonpearl glove hammer'), true],
-            [false, dungeon.initial, inventory('moonpearl mitt'), true],
-            [false, dungeon({ opened: 3 }), inventory('moonpearl glove hammer'), true],
-            [false, dungeon({ opened: 3 }), inventory('moonpearl mitt'), 'possible'],
-            [true, dungeon.initial, inventory('moonpearl hookshot flippers'), true],
-            [true, dungeon.initial, inventory('moonpearl hookshot glove'), true],
-            [true, dungeon.initial, inventory('moonpearl hookshot hammer'), true],
-            [true, dungeon({ opened: 3 }), inventory('moonpearl hookshot flippers'), 'possible'],
-            [true, dungeon({ opened: 3 }), inventory('moonpearl hookshot glove'), 'possible'],
-            [true, dungeon({ opened: 3 }), inventory('moonpearl hookshot hammer'), true],
-            (agahnim, dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}${defeated(agahnim)}`, () => {
-                agahnim && model.toggle_completion('castle_tower');
+            [dungeon.initial, inventory.none, false],
+            [dungeon.initial, inventory('moonpearl glove hammer'), true],
+            [dungeon.initial, inventory('moonpearl mitt'), true],
+            [dungeon({ opened: 3 }), inventory('moonpearl glove hammer'), true],
+            [dungeon({ opened: 3 }), inventory('moonpearl mitt'), 'possible'],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                dungeon.update(model, 'thieves');
+                inventory.update(model);
+                const actual = model.state();
+                actual.dungeons.thieves.progressable.should.equal(state);
+            }));
+
+            with_cases(
+            [dungeon.initial, inventory('moonpearl hookshot flippers'), true],
+            [dungeon.initial, inventory('moonpearl hookshot glove'), true],
+            [dungeon.initial, inventory('moonpearl hookshot hammer'), true],
+            [dungeon({ opened: 3 }), inventory('moonpearl hookshot flippers'), 'possible'],
+            [dungeon({ opened: 3 }), inventory('moonpearl hookshot glove'), 'possible'],
+            [dungeon({ opened: 3 }), inventory('moonpearl hookshot hammer'), true],
+            (dungeon, inventory, state) => it(`show progressable ${as(state)} for ${dungeon} ${inventory}, and agahnim defeated`, () => {
+                model.toggle_completion('castle_tower');
                 dungeon.update(model, 'thieves');
                 inventory.update(model);
                 const actual = model.state();
