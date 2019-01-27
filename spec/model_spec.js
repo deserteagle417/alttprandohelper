@@ -105,9 +105,14 @@ describe('Model', () => {
 
         context('desert palace', () => {
 
+            it('uses region access logic for completable', () => {
+                inventory('glove lamp sword boots').update(model);
+                const actual = model.state();
+                actual.dungeons.desert.completable.should.equal(false);
+            });
+
             with_cases(
             [inventory.none, false],
-            [inventory('glove lamp sword boots'), false],
             [inventory('book glove lamp sword'), 'possible'],
             [inventory('book glove lamp hammer'), 'possible'],
             [inventory('book glove lamp bow'), 'possible'],
@@ -142,9 +147,14 @@ describe('Model', () => {
                 actual.dungeons.desert.completable.should.equal(state);
             }));
 
+            it('uses region access logic for progressable', () => {
+                dungeon.initial, inventory('boots').update(model);
+                const actual = model.state();
+                actual.dungeons.desert.progressable.should.equal(false);
+            });
+
             with_cases(
             [dungeon.initial, inventory.none, false],
-            [dungeon.initial, inventory('boots'), false],
             [dungeon.initial, inventory('book'), 'possible'],
             [dungeon.initial, inventory('book boots'), true],
             [dungeon({ opened: 1}), inventory('book boots glove lamp'), true],
@@ -164,9 +174,14 @@ describe('Model', () => {
 
         context('tower of hera', () => {
 
+            it('uses region access logic for completable', () => {
+                inventory('sword firerod').update(model);
+                const actual = model.state();
+                actual.dungeons.hera.completable.should.equal(false);
+            });
+
             with_cases(
             [inventory.none, false],
-            [inventory('sword firerod'), false],
             [inventory('mirror flute sword firerod'), true],
             [inventory('mirror flute hammer firerod'), true],
             [inventory('mirror flute sword lamp'), true],
@@ -191,9 +206,14 @@ describe('Model', () => {
                 actual.dungeons.hera.completable.should.equal(state);
             }));
 
+            it('uses region access logic for progressable', () => {
+                inventory('firerod').update(model);
+                const actual = model.state();
+                actual.dungeons.hera.progressable.should.equal(false);
+            });
+
             with_cases(
             [inventory.none, false],
-            [inventory('firerod'), false],
             [inventory('mirror flute firerod'), true],
             [inventory('mirror flute lamp'), true],
             [inventory('mirror flute'), 'possible'],
@@ -214,9 +234,14 @@ describe('Model', () => {
 
         context('palace of darkness', () => {
 
+            it('uses region access logic for completable', () => {
+                inventory('bow hammer lamp').update(model);
+                const actual = model.state();
+                actual.dungeons.darkness.completable.should.equal(false);
+            });
+
             with_cases(
             [false, inventory.none, false],
-            [false, inventory('bow hammer lamp'), false],
             [false, inventory('moonpearl glove hammer bow lamp'), true],
             [false, inventory('moonpearl glove hammer bow'), 'dark'],
             [true, inventory('moonpearl bow hammer lamp'), true],
@@ -228,9 +253,14 @@ describe('Model', () => {
                 actual.dungeons.darkness.completable.should.equal(state);
             }));
 
+            it('uses region access logic for progressable', () => {
+                inventory('bow lamp').update(model);
+                const actual = model.state();
+                actual.dungeons.darkness.progressable.should.equal(false);
+            });
+
             with_cases(
             [false, dungeon.initial, inventory.none, false],
-            [false, dungeon.initial, inventory('bow lamp'), false],
             [false, dungeon.initial, inventory('moonpearl glove hammer bow lamp'), true],
             [false, dungeon.initial, inventory('moonpearl glove hammer'), 'possible'],
             [false, dungeon({ opened: 4 }), inventory('moonpearl mitt flippers bow lamp hammer'), true],
@@ -252,9 +282,14 @@ describe('Model', () => {
 
         context('swamp palace', () => {
 
+            it('uses region access logic for completable', () => {
+                inventory('hammer hookshot').update(model);
+                const actual = model.state();
+                actual.dungeons.swamp.completable.should.equal(false);
+            });
+
             with_cases(
             [false, inventory.none, false],
-            [false, inventory('hammer hookshot'), false],
             [false, inventory('moonpearl mirror flippers glove hammer hookshot'), true],
             [true, inventory('moonpearl mirror flippers hammer hookshot'), true],
             (agahnim, inventory, state) => it(`show completable ${as(state)} ${inventory}${defeated(agahnim)}`, () => {
@@ -264,9 +299,14 @@ describe('Model', () => {
                 actual.dungeons.swamp.completable.should.equal(state);
             }));
 
+            it('uses region access logic for progressable', () => {
+                inventory('hammer').update(model);
+                const actual = model.state();
+                actual.dungeons.swamp.progressable.should.equal(false);
+            });
+
             with_cases(
             [false, dungeon.initial, inventory.none, false],
-            [false, dungeon.initial, inventory('hammer'), false],
             [false, dungeon.initial, inventory('moonpearl mirror flippers glove hammer'), true],
             [false, dungeon.initial, inventory('moonpearl mirror flippers mitt'), 'possible'],
             [false, dungeon({ opened: 1 }), inventory('moonpearl mirror flippers glove hammer'), true],
@@ -291,9 +331,14 @@ describe('Model', () => {
 
         context('skull woods', () => {
 
+            it('uses region access logic for completable', () => {
+                inventory('firerod sword').update(model);
+                const actual = model.state();
+                actual.dungeons.skull.completable.should.equal(false);
+            });
+
             with_cases(
             [false, inventory.none, false],
-            [false, inventory('firerod sword'), false],
             [false, inventory('moonpearl glove hammer firerod sword'), true],
             [true, inventory('moonpearl hookshot flippers firerod sword'), true],
             [true, inventory('moonpearl hookshot glove firerod sword'), true],
@@ -305,9 +350,14 @@ describe('Model', () => {
                 actual.dungeons.skull.completable.should.equal(state);
             }));
 
+            it('uses region access logic for progressable', () => {
+                inventory('firerod').update(model);
+                const actual = model.state();
+                actual.dungeons.skull.progressable.should.equal(false);
+            });
+
             with_cases(
             [false, dungeon.initial, inventory.none, false],
-            [false, dungeon.initial, inventory('firerod'), false],
             [false, dungeon.initial, inventory('moonpearl glove hammer firerod'), true],
             [false, dungeon.initial, inventory('moonpearl mitt firerod'), true],
             [false, dungeon({ opened: 1 }), inventory('moonpearl glove hammer firerod sword'), true],
@@ -335,9 +385,14 @@ describe('Model', () => {
 
         context("thieves' town", () => {
 
+            it('uses region access logic for completable', () => {
+                inventory('sword').update(model);
+                const actual = model.state();
+                actual.dungeons.thieves.completable.should.equal(false);
+            });
+
             with_cases(
             [false, inventory.none, false],
-            [false, inventory('sword'), false],
             [false, inventory('moonpearl glove hammer'), true],
             [false, inventory('moonpearl mitt sword'), true],
             [false, inventory('moonpearl mitt somaria'), true],
@@ -356,9 +411,14 @@ describe('Model', () => {
                 actual.dungeons.thieves.completable.should.equal(state);
             }));
 
+            it('uses region access logic for progressable', () => {
+                inventory('hammer').update(model);
+                const actual = model.state();
+                actual.dungeons.thieves.progressable.should.equal(false);
+            });
+
             with_cases(
             [false, dungeon.initial, inventory.none, false],
-            [false, dungeon.initial, inventory('hammer'), false],
             [false, dungeon.initial, inventory('moonpearl glove hammer'), true],
             [false, dungeon.initial, inventory('moonpearl mitt'), true],
             [false, dungeon({ opened: 3 }), inventory('moonpearl glove hammer'), true],
@@ -381,9 +441,14 @@ describe('Model', () => {
 
         context('ice palace', () => {
 
+            it('uses region access logic for completable', () => {
+                inventory('hammer somaria').update(model);
+                const actual = model.state();
+                actual.dungeons.ice.completable.should.equal(false);
+            });
+
             with_cases(
             [inventory.none, false],
-            [inventory('hammer somaria'), false],
             [inventory('moonpearl flippers mitt firerod hammer somaria'), true],
             [inventory('moonpearl flippers mitt firerod hammer hookshot'), true],
             [inventory('moonpearl flippers mitt firerod hammer'), 'possible'],
@@ -396,9 +461,14 @@ describe('Model', () => {
                 actual.dungeons.ice.completable.should.equal(state);
             }));
 
+            it('uses region access logic for progressable', () => {
+                inventory('hammer').update(model);
+                const actual = model.state();
+                actual.dungeons.ice.progressable.should.equal(false);
+            });
+
             with_cases(
             [inventory.none, false],
-            [inventory('hammer'), false],
             [inventory('moonpearl flippers mitt firerod hammer'), true],
             [inventory('moonpearl flippers mitt firerod'), 'possible'],
             [inventory('moonpearl flippers mitt bombos sword hammer'), true],
@@ -413,9 +483,14 @@ describe('Model', () => {
 
         context('misery mire', () => {
 
+            it('uses region access logic for completable', () => {
+                inventory('somaria bombos ether quake lamp').update(model);
+                const actual = model.state();
+                actual.dungeons.mire.completable.should.equal(false);
+            });
+
             with_cases(
             [dungeon.initial, inventory.none, false],
-            [dungeon.initial, inventory('somaria bombos ether quake lamp'), false],
             [dungeon.initial, inventory('moonpearl boots sword flute mitt somaria bombos ether quake lamp'), true],
             [dungeon({ medallion: 1 }), inventory('moonpearl boots sword flute mitt somaria bombos lamp'), true],
             [dungeon({ medallion: 2 }), inventory('moonpearl boots sword flute mitt somaria ether lamp'), true],
@@ -432,9 +507,14 @@ describe('Model', () => {
                 actual.dungeons.mire.completable.should.equal(state);
             }));
 
+            it('uses region access logic for progressable', () => {
+                inventory('bombos ether quake firerod').update(model);
+                const actual = model.state();
+                actual.dungeons.mire.progressable.should.equal(false);
+            });
+
             with_cases(
             [dungeon.initial, inventory.none, false],
-            [dungeon.initial, inventory('bombos ether quake firerod'), false],
             [dungeon.initial, inventory('moonpearl boots sword flute mitt bombos ether quake firerod'), true],
             [dungeon({ medallion: 1 }), inventory('moonpearl boots sword flute mitt bombos firerod'), true],
             [dungeon({ medallion: 2 }), inventory('moonpearl boots sword flute mitt ether firerod'), true],
@@ -459,9 +539,14 @@ describe('Model', () => {
 
         context('turtle rock', () => {
 
+            it('uses region access logic for completable', () => {
+                inventory('icerod firerod bombos ether quake byrna lamp').update(model);
+                const actual = model.state();
+                actual.dungeons.turtle.completable.should.equal(false);
+            });
+            
             with_cases(
             [dungeon.initial, inventory.none, false],
-            [dungeon.initial, inventory('icerod firerod bombos ether quake byrna lamp'), false],
             [dungeon.initial, inventory('moonpearl mitt hammer somaria sword mirror icerod firerod bombos ether quake byrna lamp'), true],
             [dungeon({ medallion: 1 }), inventory('moonpearl mitt hammer somaria sword mirror icerod firerod bombos byrna lamp'), true],
             [dungeon({ medallion: 2 }), inventory('moonpearl mitt hammer somaria sword mirror icerod firerod ether byrna lamp'), true],
@@ -486,9 +571,14 @@ describe('Model', () => {
                 actual.dungeons.turtle.completable.should.equal(state);
             }));
 
+            it('uses region access logic for progressable', () => {
+                inventory('bombos ether quake firerod lamp').update(model);
+                const actual = model.state();
+                actual.dungeons.turtle.progressable.should.equal(false);
+            });
+
             with_cases(
             [dungeon.initial, inventory.none, false],
-            [dungeon.initial, inventory('bombos ether quake firerod lamp'), false],
             [dungeon.initial, inventory('moonpearl mitt hammer somaria sword mirror bombos ether quake firerod lamp'), true],
             [dungeon({ medallion: 1 }), inventory('moonpearl mitt hammer somaria sword mirror bombos firerod lamp'), true],
             [dungeon({ medallion: 2 }), inventory('moonpearl mitt hammer somaria sword mirror ether firerod lamp'), true],
@@ -713,6 +803,14 @@ describe('Model', () => {
     context('darkworld locations', () => {
 
         with_cases(
+        ['darkworld_mire', 'mire_w', inventory('moonpearl'), false],
+        (region, name, inventory, state) => it(`uses region access logic for locations in ${region}`, () => {
+            inventory.update(model);
+            const actual = model.state();
+            actual.darkworld[name].should.equal(state);
+        }));
+
+        with_cases(
         ['darkworld_deathmountain_west', 'spike', inventory.none, false],
         ['darkworld_deathmountain_west', 'spike', inventory('flute moonpearl hammer glove cape'), true],
         ['darkworld_deathmountain_west', 'spike', inventory('flute moonpearl hammer glove byrna'), true],
@@ -773,7 +871,6 @@ describe('Model', () => {
         ['darkworld_south', 'swamp_ne', inventory('moonpearl glove hammer'), true],
         ['darkworld_south', 'swamp_ne', inventory('moonpearl mitt'), true],
         ['darkworld_mire', 'mire_w', inventory.none, false],
-        ['darkworld_mire', 'mire_w', inventory('moonpearl'), false],
         ['darkworld_mire', 'mire_w', inventory('flute mitt moonpearl'), true],
         (region, name, inventory, state) => it(`shows ${region} - ${name} ${as(state)} ${inventory}`, () => {
             inventory.update(model);
