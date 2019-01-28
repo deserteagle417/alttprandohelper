@@ -23,6 +23,8 @@
                     lightworld_northwest,
                     lightworld_northeast,
                     lightworld_south,
+                    castle_escape,
+                    castle_tower,
                     darkworld_deathmountain_west,
                     darkworld_deathmountain_east,
                     darkworld_northwest,
@@ -54,6 +56,11 @@
                     ice: dungeon(world.ice, { ...args, region: world.ice }),
                     mire: dungeon(world.mire, { ...args, region: world.mire }),
                     turtle: dungeon(world.turtle, { ...args, region: world.turtle })
+                }, encounters: {
+                    castle_tower: {
+                        completable: (state = region_state(castle_tower, args)) &&
+                            derive_state(state, castle_tower.can_complete(args))
+                    }
                 }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
                         (state = region_state(lightworld_deathmountain_west, args)) &&
@@ -69,6 +76,9 @@
                             derive_state(state, !location.can_access || location.can_access(args))),
                     ..._.mapValues(lightworld_south.locations, location =>
                         (state = region_state(lightworld_south, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args))),
+                    ..._.mapValues(castle_escape.locations, location =>
+                        (state = region_state(castle_escape, args)) &&
                             derive_state(state, !location.can_access || location.can_access(args)))
                 }, darkworld: {
                     ..._.mapValues(darkworld_deathmountain_west.locations, location =>

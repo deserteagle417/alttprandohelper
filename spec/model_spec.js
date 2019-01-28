@@ -703,6 +703,32 @@ describe('Model', () => {
 
     });
 
+    context('encounters', () => {
+
+        context('castle tower', () => {
+
+            it('uses region access logic for completable', () => {
+                inventory('sword lamp').update(model);
+                const actual = model.state();
+                actual.encounters.castle_tower.completable.should.equal(false);
+            });
+
+            with_cases(
+            [inventory.none, false],
+            [inventory('cape sword lamp'), true],
+            [inventory('cape sword'), 'dark'],
+            [inventory('mastersword lamp'), true],
+            [inventory('mastersword'), 'dark'],
+            (inventory, state) => it(`show completable ${as(state)} ${inventory}`, () => {
+                inventory.update(model);
+                const actual = model.state();
+                actual.encounters.castle_tower.completable.should.equal(state);
+            }));
+
+        });
+
+    });
+
     context('lightworld locations', () => {
 
         with_cases(
@@ -825,6 +851,14 @@ describe('Model', () => {
         ['lightworld_south', 'hobo', inventory.none, false],
         ['lightworld_south', 'hobo', inventory('flippers'), true],
         ['lightworld_south', 'ice_cave', inventory.none, true],
+        ['castle_escape', 'sanctuary', inventory.none, true],
+        ['castle_escape', 'escape_side', inventory.none, 'dark'],
+        ['castle_escape', 'escape_side', inventory('glove'), true],
+        ['castle_escape', 'escape_side', inventory('lamp'), 'possible'],
+        ['castle_escape', 'escape_dark', inventory.none, 'dark'],
+        ['castle_escape', 'escape_dark', inventory('lamp'), true],
+        ['castle_escape', 'castle', inventory.none, true],
+        ['castle_escape', 'secret', inventory.none, true],
         (region, name, inventory, state) => it(`shows ${region} - ${name} ${as(state)} ${inventory}`, () => {
             inventory.update(model);
             const actual = model.state();
