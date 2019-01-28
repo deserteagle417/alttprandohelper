@@ -30,9 +30,7 @@
                     darkworld_south,
                     darkworld_mire
                 } = world;
-                const have_lightworld_northwest_can_enter = !!lightworld_northwest.can_enter;
-                const have_lightworld_northeast_can_enter = !!lightworld_northeast.can_enter;
-                const have_lightworld_south_can_enter = !!lightworld_south.can_enter;
+                const args = { items, world, mode };
                 const region_state = (region, args) =>
                     !region.can_enter || region.can_enter(args) ||
                     !!region.can_enter_dark && region.can_enter_dark(args) && 'dark';
@@ -46,48 +44,51 @@
                     progressable: (state = region_state(region, args)) && derive_state(state, region.can_progress(args))
                 });
                 return { dungeons: {
-                    eastern: dungeon(world.eastern, { items, world, region: world.eastern}),
-                    desert: dungeon(world.desert, { items, world, region: world.desert}),
-                    hera: dungeon(world.hera, { items, world, region: world.hera}),
-                    darkness: dungeon(world.darkness, { items, world, region: world.darkness}),
-                    swamp: dungeon(world.swamp, { items, world, region: world.swamp}),
-                    skull: dungeon(world.skull, { items, world, region: world.skull}),
-                    thieves: dungeon(world.thieves, { items, world, region: world.thieves}),
-                    ice: dungeon(world.ice, { items, world, region: world.ice}),
-                    mire: dungeon(world.mire, { items, world, region: world.mire}),
-                    turtle: dungeon(world.turtle, { items, world, region: world.turtle})
+                    eastern: dungeon(world.eastern, { ...args, region: world.eastern }),
+                    desert: dungeon(world.desert, { ...args, region: world.desert }),
+                    hera: dungeon(world.hera, { ...args, region: world.hera }),
+                    darkness: dungeon(world.darkness, { ...args, region: world.darkness }),
+                    swamp: dungeon(world.swamp, { ...args, region: world.swamp }),
+                    skull: dungeon(world.skull, { ...args, region: world.skull }),
+                    thieves: dungeon(world.thieves, { ...args, region: world.thieves }),
+                    ice: dungeon(world.ice, { ...args, region: world.ice }),
+                    mire: dungeon(world.mire, { ...args, region: world.mire }),
+                    turtle: dungeon(world.turtle, { ...args, region: world.turtle })
                 }, lightworld: {
                     ..._.mapValues(lightworld_deathmountain_west.locations, location =>
-                        (state = region_state(lightworld_deathmountain_west, { items, world })) &&
-                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(lightworld_deathmountain_west, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args))),
                     ..._.mapValues(lightworld_deathmountain_east.locations, location =>
-                        (state = region_state(lightworld_deathmountain_east, { items, world, mode })) &&
-                            derive_state(state, !location.can_access || location.can_access({ items, world, mode }))),
+                        (state = region_state(lightworld_deathmountain_east, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args))),
                     ..._.mapValues(lightworld_northwest.locations, location =>
-                        !have_lightworld_northwest_can_enter && (!location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(lightworld_northwest, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args))),
                     ..._.mapValues(lightworld_northeast.locations, location =>
-                        !have_lightworld_northeast_can_enter && (!location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(lightworld_northeast, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args))),
                     ..._.mapValues(lightworld_south.locations, location =>
-                        !have_lightworld_south_can_enter && (!location.can_access || location.can_access({ items, world })))
+                        (state = region_state(lightworld_south, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args)))
                 }, darkworld: {
                     ..._.mapValues(darkworld_deathmountain_west.locations, location =>
-                        (state = region_state(darkworld_deathmountain_west, { items, world })) &&
-                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(darkworld_deathmountain_west, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args))),
                     ..._.mapValues(darkworld_deathmountain_east.locations, location =>
-                        (state = region_state(darkworld_deathmountain_east, { items, world })) &&
-                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(darkworld_deathmountain_east, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args))),
                     ..._.mapValues(darkworld_northwest.locations, location =>
-                        (state = region_state(darkworld_northwest, { items, world })) &&
-                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(darkworld_northwest, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args))),
                     ..._.mapValues(darkworld_northeast.locations, location =>
-                        (state = region_state(darkworld_northeast, { items, world })) &&
-                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(darkworld_northeast, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args))),
                     ..._.mapValues(darkworld_south.locations, location =>
-                        (state = region_state(darkworld_south, { items, world })) &&
-                            derive_state(state, !location.can_access || location.can_access({ items, world }))),
+                        (state = region_state(darkworld_south, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args))),
                     ..._.mapValues(darkworld_mire.locations, location =>
-                        (state = region_state(darkworld_mire, { items, world })) &&
-                            derive_state(state, !location.can_access || location.can_access({ items, world })))
+                        (state = region_state(darkworld_mire, args)) &&
+                            derive_state(state, !location.can_access || location.can_access(args)))
                 } };
             },
             toggle_item(name) {
