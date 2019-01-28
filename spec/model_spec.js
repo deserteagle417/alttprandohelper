@@ -761,6 +761,7 @@ describe('Model', () => {
         ['lightworld_deathmountain_east', 'paradox', inventory('glove hookshot'), 'dark'],
         ['lightworld_deathmountain_east', 'mimic', inventory.none, false],
         ['lightworld_northwest', 'altar', inventory.none, false],
+        ['lightworld_northwest', 'altar', inventory('book'), 'viewable'],
         ['lightworld_northwest', 'mushroom', inventory.none, true],
         ['lightworld_northwest', 'hideout', inventory.none, true],
         ['lightworld_northwest', 'tree', inventory.none, 'viewable'],
@@ -855,6 +856,38 @@ describe('Model', () => {
             const actual = model.state();
             actual.lightworld[name].should.equal(state);
         }));
+
+        with_cases(
+        [inventory('flute moonpearl mitt hammer somaria sword mirror quake firerod'), true],
+        [inventory('flute moonpearl mitt hammer somaria sword mirror quake'), 'possible'],
+        [inventory('lamp moonpearl mitt hammer somaria sword mirror quake firerod'), true],
+        [inventory('lamp moonpearl mitt hammer somaria sword mirror quake'), 'possible'],
+        [inventory('moonpearl mitt hammer somaria sword mirror quake firerod'), 'dark'],
+        [inventory('moonpearl mitt hammer somaria sword mirror quake'), 'possible'],
+        (inventory, state) => it(`shows lightworld_deathmountain_east - mimic ${as(state)} ${inventory}`, () => {
+            _.times(3, () => model.raise_medallion('turtle'));
+            inventory.update(model);
+            const actual = model.state();
+            actual.lightworld.mimic.should.equal(state);
+        }));
+
+        it('shows lightworld_northwest - altar as available when three pendants have been acquired', () => {
+            model.toggle_completion('eastern');
+            model.toggle_completion('desert');
+            model.toggle_completion('hera');
+            _.times(1, () => model.raise_prize('eastern'));
+            _.times(2, () => model.raise_prize('desert'));
+            _.times(2, () => model.raise_prize('hera'));
+            const actual = model.state();
+            actual.lightworld.altar.should.be.true;
+        });
+
+        it('shows lightworld_northeast - sahasrahla as available when the green pendant have been acquired', () => {
+            model.toggle_completion('eastern');
+            _.times(1, () => model.raise_prize('eastern'));
+            const actual = model.state();
+            actual.lightworld.sahasrahla.should.be.true;
+        });
 
     });
 
@@ -966,6 +999,34 @@ describe('Model', () => {
             inventory.update(model);
             const actual = model.state();
             actual.darkworld[name].should.equal(state);
+        }));
+
+        with_cases(
+        [inventory('moonpearl glove hammer'), true],
+        (inventory, state) => it(`shows darkworld_northeast - fairy_dw ${as(state)} ${inventory} when two red crystals have been acquired`, () => {
+            model.toggle_completion('eastern');
+            model.toggle_completion('desert');
+            _.times(4, () => model.raise_prize('eastern'));
+            _.times(4, () => model.raise_prize('desert'));
+            inventory.update(model);
+            const actual = model.state();
+            actual.darkworld.fairy_dw.should.equal(state);
+        }));
+
+        with_cases(
+        [inventory('moonpearl hammer'), true],
+        [inventory('moonpearl mitt mirror'), true],
+        [inventory('moonpearl hookshot glove mirror'), true],
+        [inventory('moonpearl hookshot flippers mirror'), true],
+        (inventory, state) => it(`shows darkworld_northeast - fairy_dw ${as(state)} ${inventory}, and agahnim defeated when two red crystals have been acquired`, () => {
+            model.toggle_completion('eastern');
+            model.toggle_completion('desert');
+            _.times(4, () => model.raise_prize('eastern'));
+            _.times(4, () => model.raise_prize('desert'));
+            model.toggle_completion('castle_tower');
+            inventory.update(model);
+            const actual = model.state();
+            actual.darkworld.fairy_dw.should.equal(state);
         }));
 
     });

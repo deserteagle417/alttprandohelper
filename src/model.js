@@ -105,6 +105,15 @@
             toggle_completion(region) {
                 world = update(world, { [region]: update.toggle('completed') });
             },
+            raise_prize(region) {
+                const prize_order = ['unknown', 'pendant-green', 'pendant', 'crystal', 'crystal-red'];
+                const prize = world[region].prize;
+                const delta = 1;
+                const modulo = prize_order.length;
+                const index = prize_order.indexOf(prize);
+                const value = prize_order[(index + modulo + delta) % modulo];
+                world = update(world, { [region]: { prize: { $set: value } } });
+            },
             raise_medallion(region) {
                 const medallion_order = ['unknown', 'bombos', 'ether', 'quake'];
                 const medallion = world[region].medallion;
