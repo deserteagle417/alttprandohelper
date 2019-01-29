@@ -82,6 +82,21 @@ describe('Model', () => {
         model.state().items.should.include({ tunic: 1, bow: 0 });
     });
 
+    it('can level dungeon chests', () => {
+        model.raise_chest('eastern');
+        model.state().dungeons.eastern.chests.should.equal(0);
+
+        model.lower_chest('eastern');
+        model.state().dungeons.eastern.chests.should.equal(3);
+    });
+
+    with_cases({
+        eastern: 3, desert: 2, hera: 2, darkness: 5, swamp: 6,
+        skull: 2, thieves: 4, ice: 3, mire: 2, turtle: 5
+    }, (dungeon, chests) => it(`${dungeon} should start out with ${chests} chests`, () => {
+        model.state().dungeons[dungeon].chests.should.equal(chests);
+    }));
+
     it('can cycle dungeon prizes', () => {
         model.lower_prize('eastern');
         model.state().dungeons.eastern.prize.should.equal('crystal-red');

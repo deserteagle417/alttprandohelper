@@ -46,7 +46,7 @@
                 const dungeon = (region, args) => ({
                     completable: (state = region_state(region, args)) && derive_state(state, region.can_complete(args)),
                     progressable: (state = region_state(region, args)) && derive_state(state, region.can_progress(args)),
-                    ..._.pick(region, 'prize', 'medallion')
+                    ..._.pick(region, 'chests', 'prize', 'medallion')
                 });
                 return { items,
                     dungeons: {
@@ -120,6 +120,16 @@
             toggle_completion(region) {
                 world = update(world, { [region]: update.toggle('completed') });
             },
+            raise_chest(region) {
+                const { chests, chest_limit } = world[region];
+                const value = level(chests, chest_limit, 1);
+                world = update(world, { [region]: { chests: { $set: value } } });
+            },
+            lower_chest(region) {
+                const { chests, chest_limit } = world[region];
+                const value = level(chests, chest_limit, -1);
+                world = update(world, { [region]: { chests: { $set: value } } });
+            },
             raise_prize(region) {
                 const value = level_symbol(world[region].prize, prizes, 1);
                 world = update(world, { [region]: { prize: { $set: value } } });
@@ -135,13 +145,6 @@
             lower_medallion(region) {
                 const value = level_symbol(world[region].medallion, medallions, -1);
                 world = update(world, { [region]: { medallion: { $set: value } } });
-            },
-            lower_chest(region) {
-                const { chests, chest_limit } = world[region];
-                const delta = -1;
-                const modulo = chest_limit + 1;
-                const value = (chests + modulo + delta) % modulo;
-                world = update(world, { [region]: { chests: { $set: value } } });
             }
         }
     };
