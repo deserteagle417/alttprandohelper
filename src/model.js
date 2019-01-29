@@ -11,6 +11,7 @@
 }(typeof self !== 'undefined' ? self : this, function(create_items, create_world, update, _) {
     const open_mode_setting = {};
     const prizes = ['unknown', 'pendant-green', 'pendant', 'crystal', 'crystal-red'];
+    const medallions = ['unknown', 'bombos', 'ether', 'quake'];
 
     const create_model = () => {
         const mode = open_mode_setting;
@@ -45,7 +46,7 @@
                 const dungeon = (region, args) => ({
                     completable: (state = region_state(region, args)) && derive_state(state, region.can_complete(args)),
                     progressable: (state = region_state(region, args)) && derive_state(state, region.can_progress(args)),
-                    prize: region.prize
+                    ..._.pick(region, 'prize', 'medallion')
                 });
                 return { items,
                     dungeons: {
@@ -128,12 +129,11 @@
                 world = update(world, { [region]: { prize: { $set: value } } });
             },
             raise_medallion(region) {
-                const medallion_order = ['unknown', 'bombos', 'ether', 'quake'];
-                const medallion = world[region].medallion;
-                const delta = 1;
-                const modulo = medallion_order.length;
-                const index = medallion_order.indexOf(medallion);
-                const value = medallion_order[(index + modulo + delta) % modulo];
+                const value = level_symbol(world[region].medallion, medallions, 1);
+                world = update(world, { [region]: { medallion: { $set: value } } });
+            },
+            lower_medallion(region) {
+                const value = level_symbol(world[region].medallion, medallions, -1);
                 world = update(world, { [region]: { medallion: { $set: value } } });
             },
             lower_chest(region) {

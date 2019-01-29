@@ -94,6 +94,18 @@ describe('Model', () => {
         prizes.should.deep.equal(['unknown', 'pendant-green', 'pendant', 'crystal', 'crystal-red']);
     });
 
+    it('can cycle dungeon medallions', () => {
+        model.lower_medallion('mire');
+        model.state().dungeons.mire.medallion.should.equal('quake');
+
+        const prizes = [];
+        _.times(4, () => {
+            model.raise_medallion('mire');
+            prizes.push(model.state().dungeons.mire.medallion);
+        });
+        prizes.should.deep.equal(['unknown', 'bombos', 'ether', 'quake']);
+    });
+
     context('dungeons', () => {
 
         context('eastern palace', () => {
