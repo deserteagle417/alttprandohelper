@@ -82,6 +82,18 @@ describe('Model', () => {
         model.state().items.should.include({ tunic: 1, bow: 0 });
     });
 
+    it('can cycle dungeon prizes', () => {
+        model.lower_prize('eastern');
+        model.state().dungeons.eastern.prize.should.equal('crystal-red');
+
+        const prizes = [];
+        _.times(5, () => {
+            model.raise_prize('eastern');
+            prizes.push(model.state().dungeons.eastern.prize);
+        });
+        prizes.should.deep.equal(['unknown', 'pendant-green', 'pendant', 'crystal', 'crystal-red']);
+    });
+
     context('dungeons', () => {
 
         context('eastern palace', () => {

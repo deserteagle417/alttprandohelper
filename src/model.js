@@ -10,6 +10,7 @@
     }
 }(typeof self !== 'undefined' ? self : this, function(create_items, create_world, update, _) {
     const open_mode_setting = {};
+    const prizes = ['unknown', 'pendant-green', 'pendant', 'crystal', 'crystal-red'];
 
     const create_model = () => {
         const mode = open_mode_setting;
@@ -43,7 +44,8 @@
                 let state;
                 const dungeon = (region, args) => ({
                     completable: (state = region_state(region, args)) && derive_state(state, region.can_complete(args)),
-                    progressable: (state = region_state(region, args)) && derive_state(state, region.can_progress(args))
+                    progressable: (state = region_state(region, args)) && derive_state(state, region.can_progress(args)),
+                    prize: region.prize
                 });
                 return { items,
                     dungeons: {
@@ -118,12 +120,11 @@
                 world = update(world, { [region]: update.toggle('completed') });
             },
             raise_prize(region) {
-                const prize_order = ['unknown', 'pendant-green', 'pendant', 'crystal', 'crystal-red'];
-                const prize = world[region].prize;
-                const delta = 1;
-                const modulo = prize_order.length;
-                const index = prize_order.indexOf(prize);
-                const value = prize_order[(index + modulo + delta) % modulo];
+                const value = level_symbol(world[region].prize, prizes, 1);
+                world = update(world, { [region]: { prize: { $set: value } } });
+            },
+            lower_prize(region) {
+                const value = level_symbol(world[region].prize, prizes, -1);
                 world = update(world, { [region]: { prize: { $set: value } } });
             },
             raise_medallion(region) {
@@ -149,6 +150,12 @@
         const [max, min] = limit[0] ? limit : [limit, 0];
         const modulo = max-min+1;
         return (value-min + modulo + delta) % modulo + min;
+    };
+
+    const level_symbol = (value, symbols, delta) => {
+        const modulo = symbols.length;
+        const index = symbols.indexOf(value);
+        return symbols[(index + modulo + delta) % modulo];
     };
 
     return create_model;
