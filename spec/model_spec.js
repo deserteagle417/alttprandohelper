@@ -72,6 +72,16 @@ describe('Model', () => {
         model = create_model();
     });
 
+    it('can level items', () => {
+        model.lower_item('tunic');
+        model.lower_item('bow');
+        model.state().items.should.include({ tunic: 3, bow: 3 });
+
+        model.raise_item('tunic');
+        model.raise_item('bow');
+        model.state().items.should.include({ tunic: 1, bow: 0 });
+    });
+
     context('dungeons', () => {
 
         context('eastern palace', () => {
