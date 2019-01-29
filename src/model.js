@@ -67,41 +67,41 @@
                         }
                     }, lightworld: {
                         ..._.mapValues(lightworld_deathmountain_west.locations, location =>
-                            (state = region_state(lightworld_deathmountain_west, args)) &&
+                            location.marked ? 'marked' : (state = region_state(lightworld_deathmountain_west, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args))),
                         ..._.mapValues(lightworld_deathmountain_east.locations, location =>
-                            (state = region_state(lightworld_deathmountain_east, args)) &&
+                            location.marked ? 'marked' : (state = region_state(lightworld_deathmountain_east, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args))),
                         ..._.mapValues(lightworld_northwest.locations, location =>
-                            (state = region_state(lightworld_northwest, args)) &&
+                            location.marked ? 'marked' : (state = region_state(lightworld_northwest, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args))),
                         ..._.mapValues(lightworld_northeast.locations, location =>
-                            (state = region_state(lightworld_northeast, args)) &&
+                            location.marked ? 'marked' : (state = region_state(lightworld_northeast, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args))),
                         ..._.mapValues(lightworld_south.locations, location =>
-                            (state = region_state(lightworld_south, args)) &&
+                            location.marked ? 'marked' : (state = region_state(lightworld_south, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args))),
                         ..._.mapValues(castle_escape.locations, location =>
-                            (state = region_state(castle_escape, args)) &&
+                            location.marked ? 'marked' : (state = region_state(castle_escape, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args)))
                     }, darkworld: {
                         ..._.mapValues(darkworld_deathmountain_west.locations, location =>
-                            (state = region_state(darkworld_deathmountain_west, args)) &&
+                            location.marked ? 'marked' : (state = region_state(darkworld_deathmountain_west, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args))),
                         ..._.mapValues(darkworld_deathmountain_east.locations, location =>
-                            (state = region_state(darkworld_deathmountain_east, args)) &&
+                            location.marked ? 'marked' : (state = region_state(darkworld_deathmountain_east, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args))),
                         ..._.mapValues(darkworld_northwest.locations, location =>
-                            (state = region_state(darkworld_northwest, args)) &&
+                            location.marked ? 'marked' : (state = region_state(darkworld_northwest, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args))),
                         ..._.mapValues(darkworld_northeast.locations, location =>
-                            (state = region_state(darkworld_northeast, args)) &&
+                            location.marked ? 'marked' : (state = region_state(darkworld_northeast, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args))),
                         ..._.mapValues(darkworld_south.locations, location =>
-                            (state = region_state(darkworld_south, args)) &&
+                            location.marked ? 'marked' : (state = region_state(darkworld_south, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args))),
                         ..._.mapValues(darkworld_mire.locations, location =>
-                            (state = region_state(darkworld_mire, args)) &&
+                            location.marked ? 'marked' : (state = region_state(darkworld_mire, args)) &&
                                 derive_state(state, !location.can_access || location.can_access(args)))
                     }
                 };
@@ -145,6 +145,9 @@
             lower_medallion(region) {
                 const value = level_symbol(world[region].medallion, medallions, -1);
                 world = update(world, { [region]: { medallion: { $set: value } } });
+            },
+            toggle_overworld_mark(region, name) {
+                world = update(world, { [region]: { locations: { [name]: update.toggle('marked') } } });
             }
         }
     };

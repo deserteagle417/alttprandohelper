@@ -121,6 +121,32 @@ describe('Model', () => {
         prizes.should.deep.equal(['unknown', 'bombos', 'ether', 'quake']);
     });
 
+    with_cases({
+        lightworld_deathmountain_west: 'ether',
+        lightworld_deathmountain_east: 'island_dm',
+        lightworld_northwest: 'altar',
+        lightworld_northeast: 'zora',
+        lightworld_south: 'maze',
+        castle_escape: 'sanctuary'
+    }, (region, name) => it(`can mark ${region} locations`, () => {
+        model.toggle_overworld_mark(region, name);
+        const actual = model.state();
+        actual.lightworld[name].should.equal('marked');
+    }));
+
+    with_cases({
+        darkworld_deathmountain_west: 'spike',
+        darkworld_deathmountain_east: 'rock_hook',
+        darkworld_northwest: 'bumper',
+        darkworld_northeast: 'catfish',
+        darkworld_south: 'dig_game',
+        darkworld_mire: 'mire_w'
+    }, (region, name) => it(`can mark ${region} locations`, () => {
+        model.toggle_overworld_mark(region, name);
+        const actual = model.state();
+        actual.darkworld[name].should.equal('marked');
+    }));
+
     context('dungeons', () => {
 
         context('eastern palace', () => {
