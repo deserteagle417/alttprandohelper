@@ -19,93 +19,50 @@
         let items = create_items().items;
         return {
             state() {
-                const {
-                    lightworld_deathmountain_west,
-                    lightworld_deathmountain_east,
-                    lightworld_northwest,
-                    lightworld_northeast,
-                    lightworld_south,
-                    castle_escape,
-                    castle_tower,
-                    darkworld_deathmountain_west,
-                    darkworld_deathmountain_east,
-                    darkworld_northwest,
-                    darkworld_northeast,
-                    darkworld_south,
-                    darkworld_mire
-                } = world;
                 const args = { items, world, mode };
-                const region_state = (region, args) =>
-                    !region.can_enter || region.can_enter(args) ||
-                    !!region.can_enter_dark && region.can_enter_dark(args) && 'dark';
-                const derive_state = (region, location) =>
-                    region === true ? location :
-                    location === true ? region :
-                    location;
-                let state;
-                const dungeon = (region, args) => ({
-                    completable: region.completed ? 'marked' :
-                        (state = region_state(region, args)) && derive_state(state, region.can_complete(args)),
-                    progressable: !region.chests ? 'marked' :
-                        (state = region_state(region, args)) && derive_state(state, region.can_progress(args)),
-                    ..._.pick(region, 'chests', 'prize', 'medallion')
-                });
-                return { items,
-                    dungeons: {
-                        eastern: dungeon(world.eastern, { ...args, region: world.eastern }),
-                        desert: dungeon(world.desert, { ...args, region: world.desert }),
-                        hera: dungeon(world.hera, { ...args, region: world.hera }),
-                        darkness: dungeon(world.darkness, { ...args, region: world.darkness }),
-                        swamp: dungeon(world.swamp, { ...args, region: world.swamp }),
-                        skull: dungeon(world.skull, { ...args, region: world.skull }),
-                        thieves: dungeon(world.thieves, { ...args, region: world.thieves }),
-                        ice: dungeon(world.ice, { ...args, region: world.ice }),
-                        mire: dungeon(world.mire, { ...args, region: world.mire }),
-                        turtle: dungeon(world.turtle, { ...args, region: world.turtle })
-                    }, encounters: {
-                        castle_tower: {
-                            completable: (state = region_state(castle_tower, args)) &&
-                                derive_state(state, castle_tower.can_complete(args))
-                        }
-                    }, lightworld: {
-                        ..._.mapValues(lightworld_deathmountain_west.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(lightworld_deathmountain_west, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args))),
-                        ..._.mapValues(lightworld_deathmountain_east.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(lightworld_deathmountain_east, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args))),
-                        ..._.mapValues(lightworld_northwest.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(lightworld_northwest, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args))),
-                        ..._.mapValues(lightworld_northeast.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(lightworld_northeast, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args))),
-                        ..._.mapValues(lightworld_south.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(lightworld_south, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args))),
-                        ..._.mapValues(castle_escape.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(castle_escape, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args)))
-                    }, darkworld: {
-                        ..._.mapValues(darkworld_deathmountain_west.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(darkworld_deathmountain_west, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args))),
-                        ..._.mapValues(darkworld_deathmountain_east.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(darkworld_deathmountain_east, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args))),
-                        ..._.mapValues(darkworld_northwest.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(darkworld_northwest, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args))),
-                        ..._.mapValues(darkworld_northeast.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(darkworld_northeast, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args))),
-                        ..._.mapValues(darkworld_south.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(darkworld_south, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args))),
-                        ..._.mapValues(darkworld_mire.locations, location =>
-                            location.marked ? 'marked' : (state = region_state(darkworld_mire, args)) &&
-                                derive_state(state, !location.can_access || location.can_access(args)))
-                    }
+                const derive_state = (region, args, location) => {
+                    region = !region.can_enter || region.can_enter(args) ||
+                        !!region.can_enter_dark && region.can_enter_dark(args) && 'dark';
+                    // respects dark higher, but possible/viewable highest
+                    return region && (location =>
+                        region === true ? location :
+                        location === true ? region :
+                        location
+                    )(location(args));
+                };
+                const dungeons = (...dungeons) =>
+                    _.mapValues(_.pick(world, dungeons), region => ({
+                        completable: region.completed ? 'marked' : derive_state(region, { ...args, region }, region.can_complete),
+                        progressable: !region.chests ? 'marked' : derive_state(region, { ...args, region }, region.can_progress),
+                        ..._.pick(region, 'chests', 'prize', 'medallion')
+                    }));
+                const overworld = (...regions) =>
+                    _.assign(..._.map(_.pick(world, regions), region => ({
+                        ..._.mapValues(region.locations, location => location.marked ? 'marked' :
+                            derive_state(region, args, args => !location.can_access || location.can_access(args)))
+                    })));
+                return {
+                    items,
+                    dungeons: dungeons(
+                        'eastern', 'desert', 'hera', 'darkness', 'swamp',
+                        'skull', 'thieves', 'ice', 'mire', 'turtle'),
+                    encounters: {
+                        castle_tower: { completable: derive_state(world.castle_tower, args, world.castle_tower.can_complete) }
+                    },
+                    lightworld: overworld(
+                        'lightworld_deathmountain_west',
+                        'lightworld_deathmountain_east',
+                        'lightworld_northwest',
+                        'lightworld_northeast',
+                        'lightworld_south',
+                        'castle_escape'),
+                    darkworld: overworld(
+                        'darkworld_deathmountain_west',
+                        'darkworld_deathmountain_east',
+                        'darkworld_northwest',
+                        'darkworld_northeast',
+                        'darkworld_south',
+                        'darkworld_mire')
                 };
             },
             toggle_item(name) {
