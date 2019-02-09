@@ -64,6 +64,11 @@ const as = state => `as ${
     state === false ? 'unavailable' :
     state}`;
 
+const each_dungeon = [
+    'eastern', 'desert', 'hera', 'darkness', 'swamp',
+    'skull', 'thieves', 'ice', 'mire', 'turtle'
+];
+
 describe('Model', () => {
 
     let model;
@@ -82,6 +87,12 @@ describe('Model', () => {
         model.state().items.should.include({ tunic: 1, bow: 0 });
     });
 
+    with_cases(...each_dungeon,
+    (dungeon) => it(`show completable as marked for ${dungeon} when completed`, () => {
+        model.toggle_completion(dungeon);
+        model.state().dungeons[dungeon].completable.should.equal('marked');
+    }));
+
     it('can level dungeon chests', () => {
         model.raise_chest('eastern');
         model.state().dungeons.eastern.chests.should.equal(0);
@@ -95,6 +106,12 @@ describe('Model', () => {
         skull: 2, thieves: 4, ice: 3, mire: 2, turtle: 5
     }, (dungeon, chests) => it(`${dungeon} should start out with ${chests} chests`, () => {
         model.state().dungeons[dungeon].chests.should.equal(chests);
+    }));
+
+    with_cases(...each_dungeon,
+    (dungeon) => it(`show progressable as marked for ${dungeon} when all chests are opened`, () => {
+        model.raise_chest(dungeon);
+        model.state().dungeons[dungeon].progressable.should.equal('marked');
     }));
 
     it('can cycle dungeon prizes', () => {

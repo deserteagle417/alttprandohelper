@@ -44,8 +44,10 @@
                     location;
                 let state;
                 const dungeon = (region, args) => ({
-                    completable: (state = region_state(region, args)) && derive_state(state, region.can_complete(args)),
-                    progressable: (state = region_state(region, args)) && derive_state(state, region.can_progress(args)),
+                    completable: region.completed ? 'marked' :
+                        (state = region_state(region, args)) && derive_state(state, region.can_complete(args)),
+                    progressable: !region.chests ? 'marked' :
+                        (state = region_state(region, args)) && derive_state(state, region.can_progress(args)),
                     ..._.pick(region, 'chests', 'prize', 'medallion')
                 });
                 return { items,
