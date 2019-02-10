@@ -74,7 +74,7 @@ describe('Model', () => {
     let model;
 
     beforeEach(() => {
-        model = create_model();
+        model = create_model({ open: true });
     });
 
     it('can level items', () => {
@@ -1154,6 +1154,30 @@ describe('Model', () => {
             const actual = model.state();
             actual.darkworld.fairy_dw.should.equal(state);
         }));
+
+    });
+
+    context('in standard mode', () => {
+
+        beforeEach(() => {
+            model = create_model({ standard: true });
+        });
+
+        with_cases(
+        ['castle_escape', 'sanctuary'],
+        ['castle_escape', 'escape_dark'],
+        ['castle_escape', 'castle'],
+        ['castle_escape', 'secret'],
+        ['lightworld_south', 'link_house'],
+        (region, name) => it(`shows ${region} - ${name} as marked initially`, () => {
+            const actual = model.state()
+            actual.lightworld[name].should.equal('marked');
+        }));
+
+        it('shows castle_escape - escape_side as unmarked initially', () => {
+            const actual = model.state();
+            actual.lightworld.escape_side.should.not.equal('marked');
+        });
 
     });
 

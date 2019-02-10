@@ -9,12 +9,10 @@
         root.update = factory(root.create_items, root.create_world, root.update, root._);
     }
 }(typeof self !== 'undefined' ? self : this, function(create_items, create_world, update, _) {
-    const open_mode_setting = {};
     const prizes = ['unknown', 'pendant-green', 'pendant', 'crystal', 'crystal-red'];
     const medallions = ['unknown', 'bombos', 'ether', 'quake'];
 
-    const create_model = () => {
-        const mode = open_mode_setting;
+    const create_model = (mode) => {
         let world = create_world(mode).world;
         let items = create_items().items;
         return {
