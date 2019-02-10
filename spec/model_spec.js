@@ -1179,6 +1179,15 @@ describe('Model', () => {
             actual.lightworld.escape_side.should.not.equal('marked');
         });
 
+        with_cases(
+        ['escape_side'],
+        ['escape_dark', 'toggle'],
+        (name, toggle) => it(`shows castle_escape - ${name} as available without any items`, () => {
+            toggle && model.toggle_overworld_mark('castle_escape', name);
+            const actual = model.state();
+            actual.lightworld[name].should.be.true;
+        }));
+
     });
 
 });
