@@ -1190,4 +1190,35 @@ describe('Model', () => {
 
     });
 
+    context('in keysanity mode', () => {
+
+        beforeEach(() => {
+            model = create_model({ keysanity: true, open: true });
+        });
+
+        with_cases({
+            eastern: 6, desert: 6, hera: 6, darkness: 14, swamp: 10,
+            skull: 7, thieves: 8, ice: 8, mire: 8, turtle: 12
+        }, (dungeon, chests) => it(`${dungeon} should start out with ${chests} chests`, () => {
+            model.state().dungeons[dungeon].chests.should.equal(chests);
+        }));
+
+        it('can level dungeon keys', () => {
+            model.lower_key('darkness');
+            model.state().dungeons.darkness.keys.should.equal(6);
+
+            model.raise_key('darkness');
+            model.state().dungeons.darkness.keys.should.equal(0);
+        });
+
+        with_cases({
+            eastern: 0, desert: 1, hera: 1, darkness: 6, swamp: 1,
+            skull: 2, thieves: 1, ice: 2, mire: 3, turtle: 4
+        }, (dungeon, keys) => it(`${dungeon} should have a maximum of ${keys} keys`, () => {
+            model.lower_key(dungeon);
+            model.state().dungeons[dungeon].keys.should.equal(keys);
+        }));
+
+    });
+
 });

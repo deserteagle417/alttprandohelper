@@ -32,7 +32,7 @@
                     _.mapValues(_.pick(world, dungeons), region => ({
                         completable: region.completed ? 'marked' : derive_state(region, { ...args, region }, region.can_complete),
                         progressable: !region.chests ? 'marked' : derive_state(region, { ...args, region }, region.can_progress),
-                        ..._.pick(region, 'chests', 'prize', 'medallion')
+                        ..._.pick(region, 'chests', 'prize', 'medallion', 'keys')
                     }));
                 const overworld = (...regions) =>
                     _.assign(..._.map(_.pick(world, regions), region => ({
@@ -76,6 +76,16 @@
             },
             toggle_completion(region) {
                 world = update(world, { [region]: update.toggle('completed') });
+            },
+            raise_key(region) {
+                const { keys, key_limit } = world[region];
+                const value = level(keys, key_limit, 1);
+                world = update(world, { [region]: { keys: { $set: value } } });
+            },
+            lower_key(region) {
+                const { keys, key_limit } = world[region];
+                const value = level(keys, key_limit, -1);
+                world = update(world, { [region]: { keys: { $set: value } } });
             },
             raise_chest(region) {
                 const { chests, chest_limit } = world[region];
