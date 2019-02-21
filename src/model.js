@@ -37,7 +37,7 @@
                 const overworld = (...regions) =>
                     _.assign(..._.map(_.pick(world, regions), region => ({
                         ..._.mapValues(region.locations, location => location.marked ? 'marked' :
-                            derive_state(region, args, args => !location.can_access || location.can_access(args)))
+                            derive_state(region, { ...args, region }, args => !location.can_access || location.can_access(args)))
                     })));
                 return {
                     items,
