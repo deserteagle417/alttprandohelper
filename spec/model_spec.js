@@ -1196,6 +1196,27 @@ describe('Model', () => {
             model = create_model({ keysanity: true, open: true });
         });
 
+        it("can level ganon's tower chests", () => {
+            model.raise_chest('ganon_tower');
+            model.state().ganon_tower.chests.should.equal(0);
+
+            model.lower_chest('ganon_tower');
+            model.state().ganon_tower.chests.should.equal(27);
+        });
+
+        it("can level ganon's tower keys", () => {
+            model.lower_key('ganon_tower');
+            model.state().ganon_tower.keys.should.equal(4);
+
+            model.raise_key('ganon_tower');
+            model.state().ganon_tower.keys.should.equal(0);
+        });
+
+        it("can toggle ganon's tower big key", () => {
+            model.toggle_big_key('ganon_tower');
+            model.state().ganon_tower.big_key.should.be.true;
+        });
+
         with_cases({
             eastern: 6, desert: 6, hera: 6, darkness: 14, swamp: 10,
             skull: 7, thieves: 8, ice: 8, mire: 8, turtle: 12

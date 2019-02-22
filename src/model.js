@@ -39,7 +39,7 @@
                         ..._.mapValues(region.locations, location => location.marked ? 'marked' :
                             derive_state(region, { ...args, region }, args => !location.can_access || location.can_access(args)))
                     })));
-                return {
+                return _.pickBy({
                     items,
                     dungeons: dungeons(
                         'eastern', 'desert', 'hera', 'darkness', 'swamp',
@@ -60,8 +60,9 @@
                         'darkworld_northwest',
                         'darkworld_northeast',
                         'darkworld_south',
-                        'darkworld_mire')
-                };
+                        'darkworld_mire'),
+                    ganon_tower: mode.keysanity && world.ganon_tower
+                });
             },
             toggle_item(name) {
                 items = update(items, update.toggle(name));
@@ -76,6 +77,9 @@
             },
             toggle_completion(region) {
                 world = update(world, { [region]: update.toggle('completed') });
+            },
+            toggle_big_key(region) {
+                world = update(world, { [region]: update.toggle('big_key') });
             },
             raise_key(region) {
                 const { keys, key_limit } = world[region];
