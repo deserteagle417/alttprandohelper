@@ -1604,6 +1604,97 @@ describe('Model', () => {
 
             });
 
+            context('ice palace', () => {
+
+                with_cases(
+                [dungeon.initial, inventory.none, 'compass', false],
+                [dungeon.initial, inventory.none, 'freezor', false],
+                [dungeon.initial, inventory.none, 'iced_t', false],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos'), 'freezor', true],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos'), 'iced_t', true],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod'), 'freezor', true],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod'), 'iced_t', true],
+                [dungeon.initial, inventory.none, 'big_chest', false],
+                [dungeon({ big_key: true }), inventory('moonpearl flippers mitt sword bombos'), 'big_chest', true],
+                [dungeon({ big_key: true }), inventory('moonpearl flippers mitt firerod'), 'big_chest', true],
+                [dungeon.initial, inventory.none, 'spike', false],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos'), 'spike', 'possible'],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod'), 'spike', 'possible'],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hookshot'), 'spike', true],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod hookshot'), 'spike', true],
+                [dungeon.initial, inventory.none, 'map', false],
+                [dungeon.initial, inventory.none, 'big_key', false],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hammer'), 'map', 'possible'],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hammer'), 'big_key', 'possible'],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod hammer'), 'map', 'possible'],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod hammer'), 'big_key', 'possible'],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hammer hookshot'), 'map', true],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hammer hookshot'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod hammer hookshot'), 'map', true],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod hammer hookshot'), 'big_key', true],
+                [dungeon.initial, inventory.none, 'boss', false],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hammer'), 'boss', 'possible'],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod hammer'), 'boss', 'possible'],
+                [dungeon({ keys: 1, big_key: true }), inventory('moonpearl flippers mitt sword bombos hammer somaria'), 'boss', true],
+                [dungeon({ keys: 1, big_key: true }), inventory('moonpearl flippers mitt firerod hammer somaria'), 'boss', true],
+                [dungeon({ keys: 2, big_key: true }), inventory('moonpearl flippers mitt sword bombos hammer'), 'boss', true],
+                [dungeon({ keys: 2, big_key: true }), inventory('moonpearl flippers mitt firerod hammer'), 'boss', true],
+                (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'ice');
+                    inventory.update(model);
+                    model.state().dungeons.ice.locations[location].should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory.none, false],
+                [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hammer'), 'possible'],
+                [dungeon.initial, inventory('moonpearl flippers mitt firerod hammer'), 'possible'],
+                [dungeon({ keys: 1, big_key: true }), inventory('moonpearl flippers mitt sword bombos hammer somaria'), true],
+                [dungeon({ keys: 1, big_key: true }), inventory('moonpearl flippers mitt firerod hammer somaria'), true],
+                [dungeon({ keys: 2, big_key: true }), inventory('moonpearl flippers mitt sword bombos hammer'), true],
+                [dungeon({ keys: 2, big_key: true }), inventory('moonpearl flippers mitt firerod hammer'), true],
+                (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'ice');
+                    inventory.update(model);
+                    model.state().dungeons.ice.completable.should.equal(state);
+                }));
+
+                context('using bomb jump', () => {
+
+                    beforeEach(() => {
+                        model = create_model({ keysanity: true, open: true, bomb_jump: true });
+                    });
+
+                    with_cases(
+                    [dungeon.initial, inventory('moonpearl flippers mitt sword bombos'), 'spike', true],
+                    [dungeon.initial, inventory('moonpearl flippers mitt firerod'), 'spike', true],
+                    [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hammer'), 'map', true],
+                    [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hammer'), 'big_key', true],
+                    [dungeon.initial, inventory('moonpearl flippers mitt firerod hammer'), 'map', true],
+                    [dungeon.initial, inventory('moonpearl flippers mitt firerod hammer'), 'big_key', true],
+                    [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hammer'), 'boss', true],
+                    [dungeon.initial, inventory('moonpearl flippers mitt firerod hammer'), 'boss', true],
+                    (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}`, () => {
+                        dungeon.update(model, 'ice');
+                        inventory.update(model);
+                        model.state().dungeons.ice.locations[location].should.equal(state);
+                    }));
+
+                    with_cases(
+                    [dungeon.initial, inventory('moonpearl flippers mitt sword bombos hammer'), true],
+                    [dungeon.initial, inventory('moonpearl flippers mitt firerod hammer'), true],
+                    (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                        dungeon.update(model, 'ice');
+                        inventory.update(model);
+                        model.state().dungeons.ice.completable.should.equal(state);
+                    }));
+
+                });
+
+            });
+
         });
 
     });
