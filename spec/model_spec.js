@@ -1354,6 +1354,77 @@ describe('Model', () => {
 
             });
 
+            context('swamp palace', () => {
+
+                with_cases(
+                [dungeon.initial, inventory.none, 'entrance', false],
+                [dungeon.initial, inventory('moonpearl mirror flippers glove hammer'), 'entrance', true],
+                [dungeon.initial, inventory('moonpearl mirror flippers mitt'), 'entrance', true],
+                [dungeon.initial, inventory.none, 'map', false],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers glove hammer'), 'map', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers mitt'), 'map', true],
+                [dungeon.initial, inventory.none, 'big_key', false],
+                [dungeon.initial, inventory.none, 'west', false],
+                [dungeon.initial, inventory.none, 'compass', false],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers glove hammer'), 'big_key', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers glove hammer'), 'west', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers glove hammer'), 'compass', true],
+                [dungeon.initial, inventory.none, 'big_chest', false],
+                [dungeon({ keys: 1, big_key: true }), inventory('moonpearl mirror flippers glove hammer'), 'big_chest', true],
+                [dungeon.initial, inventory.none, 'waterfall', false],
+                [dungeon.initial, inventory.none, 'toilet_left', false],
+                [dungeon.initial, inventory.none, 'toilet_right', false],
+                [dungeon.initial, inventory.none, 'boss', false],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers glove hammer hookshot'), 'waterfall', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers glove hammer hookshot'), 'toilet_left', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers glove hammer hookshot'), 'toilet_right', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers glove hammer hookshot'), 'boss', true],
+                (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'swamp');
+                    inventory.update(model);
+                    model.state().dungeons.swamp.locations[location].should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory('moonpearl mirror flippers hammer'), 'entrance', true],
+                [dungeon.initial, inventory('moonpearl mirror flippers hookshot'), 'entrance', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers hammer'), 'map', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers hookshot'), 'map', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers hammer'), 'big_key', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers hammer'), 'west', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers hammer'), 'compass', true],
+                [dungeon({ keys: 1, big_key: true }), inventory('moonpearl mirror flippers hammer'), 'big_chest', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers hammer hookshot'), 'waterfall', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers hammer hookshot'), 'toilet_left', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers hammer hookshot'), 'toilet_right', true],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers hammer hookshot'), 'boss', true],
+                (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}, and agahnim defeated`, () => {
+                    model.toggle_completion('castle_tower');
+                    dungeon.update(model, 'swamp');
+                    inventory.update(model);
+                    model.state().dungeons.swamp.locations[location].should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory.none, false],
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers glove hammer hookshot'), true],
+                (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'swamp');
+                    inventory.update(model);
+                    model.state().dungeons.swamp.completable.should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon({ keys: 1 }), inventory('moonpearl mirror flippers hammer hookshot'), true],
+                (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}, and agahnim defeated`, () => {
+                    model.toggle_completion('castle_tower');
+                    dungeon.update(model, 'swamp');
+                    inventory.update(model);
+                    model.state().dungeons.swamp.completable.should.equal(state);
+                }));
+
+            });
+
         });
 
     });
