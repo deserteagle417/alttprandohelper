@@ -1507,6 +1507,103 @@ describe('Model', () => {
 
             });
 
+            context("thieves' town", () => {
+
+                with_cases(
+                [dungeon.initial, inventory.none, 'big_key', false],
+                [dungeon.initial, inventory.none, 'map', false],
+                [dungeon.initial, inventory.none, 'compass', false],
+                [dungeon.initial, inventory.none, 'ambush', false],
+                [dungeon.initial, inventory('moonpearl glove hammer'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl glove hammer'), 'map', true],
+                [dungeon.initial, inventory('moonpearl glove hammer'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl glove hammer'), 'ambush', true],
+                [dungeon.initial, inventory('moonpearl mitt'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl mitt'), 'map', true],
+                [dungeon.initial, inventory('moonpearl mitt'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl mitt'), 'ambush', true],
+                [dungeon.initial, inventory.none, 'attic', false],
+                [dungeon.initial, inventory.none, 'cell', false],
+                [dungeon({ big_key: true }), inventory('moonpearl glove hammer'), 'attic', true],
+                [dungeon({ big_key: true }), inventory('moonpearl glove hammer'), 'cell', true],
+                [dungeon({ big_key: true }), inventory('moonpearl mitt'), 'attic', true],
+                [dungeon({ big_key: true }), inventory('moonpearl mitt'), 'cell', true],
+                [dungeon.initial, inventory.none, 'big_chest', false],
+                [dungeon({ keys: 1, big_key: true }), inventory('moonpearl glove hammer'), 'big_chest', true],
+                [dungeon.initial, inventory.none, 'boss', false],
+                [dungeon({ big_key: true }), inventory('moonpearl glove hammer'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('moonpearl mitt sword'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('moonpearl mitt somaria'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('moonpearl mitt byrna'), 'boss', true],
+                (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'thieves');
+                    inventory.update(model);
+                    model.state().dungeons.thieves.locations[location].should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory('moonpearl hookshot flippers'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl hookshot flippers'), 'map', true],
+                [dungeon.initial, inventory('moonpearl hookshot flippers'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl hookshot flippers'), 'ambush', true],
+                [dungeon.initial, inventory('moonpearl hookshot glove'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl hookshot glove'), 'map', true],
+                [dungeon.initial, inventory('moonpearl hookshot glove'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl hookshot glove'), 'ambush', true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer'), 'map', true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer'), 'ambush', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot flippers'), 'attic', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot flippers'), 'cell', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot glove'), 'attic', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot glove'), 'cell', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot hammer'), 'attic', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot hammer'), 'cell', true],
+                [dungeon({ keys: 1, big_key: true }), inventory('moonpearl hookshot hammer'), 'big_chest', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot hammer'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot flippers sword'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot flippers somaria'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot flippers byrna'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot glove sword'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot glove somaria'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot glove byrna'), 'boss', true],
+                (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}, and agahnim defeated`, () => {
+                    model.toggle_completion('castle_tower');
+                    dungeon.update(model, 'thieves');
+                    inventory.update(model);
+                    model.state().dungeons.thieves.locations[location].should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory.none, false],
+                [dungeon({ big_key: true }), inventory('moonpearl glove hammer'), true],
+                [dungeon({ big_key: true }), inventory('moonpearl mitt sword'), true],
+                [dungeon({ big_key: true }), inventory('moonpearl mitt somaria'), true],
+                [dungeon({ big_key: true }), inventory('moonpearl mitt byrna'), true],
+                (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'thieves');
+                    inventory.update(model);
+                    model.state().dungeons.thieves.completable.should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot hammer'), true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot flippers sword'), true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot flippers somaria'), true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot flippers byrna'), true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot glove sword'), true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot glove somaria'), true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot glove byrna'), true],
+                (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}, and agahnim defeated`, () => {
+                    model.toggle_completion('castle_tower');
+                    dungeon.update(model, 'thieves');
+                    inventory.update(model);
+                    model.state().dungeons.thieves.completable.should.equal(state);
+                }));
+
+            });
+
         });
 
     });
