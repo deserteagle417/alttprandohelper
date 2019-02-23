@@ -8,17 +8,19 @@ chai.should();
 
 const create_model = require('../src/model');
 
-const dungeon = ({ opened = 0, medallion = 0, big_key }) => {
+const dungeon = ({ opened = 0, medallion = 0, keys = 0, big_key }) => {
     return {
         update(model, region) {
             _.times(opened, () => model.lower_chest(region));
             _.times(medallion, () => model.raise_medallion(region));
+            _.times(keys, () => model.raise_key(region));
             big_key && model.toggle_big_key(region);
         },
         toString() {
             const parts = _.compact([
                 medallion && `medallion ${medallion}`,
                 opened && `${opened} opened chests`,
+                keys && `${keys} small keys`,
                 big_key && 'big key'
             ]);
             return parts.length ?
@@ -1273,6 +1275,81 @@ describe('Model', () => {
                     dungeon.update(model, 'eastern');
                     inventory.update(model);
                     model.state().dungeons.eastern.completable.should.equal(state);
+                }));
+
+            });
+
+            context('tower of hera', () => {
+
+                with_cases(
+                [dungeon.initial, inventory.none, 'cage', false],
+                [dungeon.initial, inventory('mirror flute'), 'cage', true],
+                [dungeon.initial, inventory('mirror glove lamp'), 'cage', true],
+                [dungeon.initial, inventory('mirror glove'), 'cage', 'dark'],
+                [dungeon.initial, inventory('hookshot hammer flute'), 'cage', true],
+                [dungeon.initial, inventory('hookshot hammer glove lamp'), 'cage', true],
+                [dungeon.initial, inventory('hookshot hammer glove'), 'cage', 'dark'],
+                [dungeon.initial, inventory.none, 'map', false],
+                [dungeon.initial, inventory('mirror flute'), 'map', true],
+                [dungeon.initial, inventory('mirror glove lamp'), 'map', true],
+                [dungeon.initial, inventory('mirror glove'), 'map', 'dark'],
+                [dungeon.initial, inventory('hookshot hammer flute'), 'map', true],
+                [dungeon.initial, inventory('hookshot hammer glove lamp'), 'map', true],
+                [dungeon.initial, inventory('hookshot hammer glove'), 'map', 'dark'],
+                [dungeon.initial, inventory.none, 'big_key', false],
+                [dungeon({ keys: 1 }), inventory('mirror flute firerod'), 'big_key', true],
+                [dungeon({ keys: 1 }), inventory('mirror flute lamp'), 'big_key', true],
+                [dungeon({ keys: 1 }), inventory('mirror glove firerod'), 'big_key', 'dark'],
+                [dungeon({ keys: 1 }), inventory('mirror glove lamp'), 'big_key', true],
+                [dungeon({ keys: 1 }), inventory('hookshot hammer flute firerod'), 'big_key', true],
+                [dungeon({ keys: 1 }), inventory('hookshot hammer flute lamp'), 'big_key', true],
+                [dungeon({ keys: 1 }), inventory('hookshot hammer glove firerod'), 'big_key', 'dark'],
+                [dungeon({ keys: 1 }), inventory('hookshot hammer glove lamp'), 'big_key', true],
+                [dungeon.initial, inventory.none, 'compass', false],
+                [dungeon({ big_key: true }), inventory('mirror flute'), 'compass', true],
+                [dungeon({ big_key: true }), inventory('mirror glove lamp'), 'compass', true],
+                [dungeon({ big_key: true }), inventory('mirror glove'), 'compass', 'dark'],
+                [dungeon({ big_key: true }), inventory('hookshot hammer flute'), 'compass', true],
+                [dungeon({ big_key: true }), inventory('hookshot hammer glove lamp'), 'compass', true],
+                [dungeon({ big_key: true }), inventory('hookshot hammer glove'), 'compass', 'dark'],
+                [dungeon.initial, inventory.none, 'big_chest', false],
+                [dungeon({ big_key: true }), inventory('mirror flute'), 'big_chest', true],
+                [dungeon({ big_key: true }), inventory('mirror glove lamp'), 'big_chest', true],
+                [dungeon({ big_key: true }), inventory('mirror glove'), 'big_chest', 'dark'],
+                [dungeon({ big_key: true }), inventory('hookshot hammer flute'), 'big_chest', true],
+                [dungeon({ big_key: true }), inventory('hookshot hammer glove lamp'), 'big_chest', true],
+                [dungeon({ big_key: true }), inventory('hookshot hammer glove'), 'big_chest', 'dark'],
+                [dungeon.initial, inventory.none, 'boss', false],
+                [dungeon({ big_key: true }), inventory('mirror flute sword'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('mirror flute hammer'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('mirror glove lamp sword'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('mirror glove lamp hammer'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('mirror glove sword'), 'boss', 'dark'],
+                [dungeon({ big_key: true }), inventory('mirror glove hammer'), 'boss', 'dark'],
+                [dungeon({ big_key: true }), inventory('hookshot hammer flute'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('hookshot hammer glove lamp'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('hookshot hammer glove'), 'boss', 'dark'],
+                (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'hera');
+                    inventory.update(model);
+                    model.state().dungeons.hera.locations[location].should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory.none, false],
+                [dungeon({ big_key: true }), inventory('mirror flute sword'), true],
+                [dungeon({ big_key: true }), inventory('mirror flute hammer'), true],
+                [dungeon({ big_key: true }), inventory('mirror glove lamp sword'), true],
+                [dungeon({ big_key: true }), inventory('mirror glove lamp hammer'), true],
+                [dungeon({ big_key: true }), inventory('mirror glove sword'), 'dark'],
+                [dungeon({ big_key: true }), inventory('mirror glove hammer'), 'dark'],
+                [dungeon({ big_key: true }), inventory('hookshot hammer flute'), true],
+                [dungeon({ big_key: true }), inventory('hookshot hammer glove lamp'), true],
+                [dungeon({ big_key: true }), inventory('hookshot hammer glove'), 'dark'],
+                (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'hera');
+                    inventory.update(model);
+                    model.state().dungeons.hera.completable.should.equal(state);
                 }));
 
             });
