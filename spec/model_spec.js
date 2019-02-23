@@ -8,16 +8,18 @@ chai.should();
 
 const create_model = require('../src/model');
 
-const dungeon = ({ opened = 0, medallion = 0 }) => {
+const dungeon = ({ opened = 0, medallion = 0, big_key }) => {
     return {
         update(model, region) {
             _.times(opened, () => model.lower_chest(region));
             _.times(medallion, () => model.raise_medallion(region));
+            big_key && model.toggle_big_key(region);
         },
         toString() {
             const parts = _.compact([
                 medallion && `medallion ${medallion}`,
-                opened && `${opened} opened chests`
+                opened && `${opened} opened chests`,
+                big_key && 'big key'
             ]);
             return parts.length ?
                 `dungeon with ${parts.join(', ')}` :
@@ -1239,6 +1241,43 @@ describe('Model', () => {
             model.lower_key(dungeon);
             model.state().dungeons[dungeon].keys.should.equal(keys);
         }));
+
+        context('dungeons', () => {
+
+            // Todo: check progressable together with location marking
+
+            context('eastern palace', () => {
+
+                with_cases(
+                [dungeon.initial, inventory.none, 'compass', true],
+                [dungeon.initial, inventory.none, 'cannonball', true],
+                [dungeon.initial, inventory.none, 'map', true],
+                [dungeon.initial, inventory.none, 'big_chest', false],
+                [dungeon({ big_key: true }), inventory.none, 'big_chest', true],
+                [dungeon.initial, inventory.none, 'big_key', 'dark'],
+                [dungeon.initial, inventory('lamp'), 'big_key', true],
+                [dungeon.initial, inventory.none, 'boss', false],
+                [dungeon({ big_key: true }), inventory('bow'), 'boss', 'dark'],
+                [dungeon({ big_key: true }), inventory('bow lamp'), 'boss', true],
+                (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'eastern');
+                    inventory.update(model);
+                    model.state().dungeons.eastern.locations[location].should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory.none, false],
+                [dungeon({ big_key: true }), inventory('bow'), 'dark'],
+                [dungeon({ big_key: true }), inventory('bow lamp'), true],
+                (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'eastern');
+                    inventory.update(model);
+                    model.state().dungeons.eastern.completable.should.equal(state);
+                }));
+
+            });
+
+        });
 
     });
 

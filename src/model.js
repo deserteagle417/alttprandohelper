@@ -15,6 +15,7 @@
     const create_model = (mode) => {
         let world = create_world(mode).world;
         let items = create_items().items;
+        let { keysanity } = mode;
         return {
             state() {
                 const args = { items, world, mode };
@@ -29,10 +30,14 @@
                     )(location(args));
                 };
                 const dungeons = (...dungeons) =>
-                    _.mapValues(_.pick(world, dungeons), region => ({
+                    _.mapValues(_.pick(world, dungeons), region => update({
                         completable: region.completed ? 'marked' : derive_state(region, { ...args, region }, region.can_complete),
                         progressable: !region.chests ? 'marked' : derive_state(region, { ...args, region }, region.can_progress),
                         ..._.pick(region, 'chests', 'prize', 'medallion', 'keys')
+                    }, {
+                        locations: keysanity && { $set: _.mapValues(region.locations, location =>
+                            derive_state(region, { ...args, region }, args => !location.can_access || location.can_access(args)))
+                        }
                     }));
                 const overworld = (...regions) =>
                     _.assign(..._.map(_.pick(world, regions), region => ({
@@ -61,7 +66,7 @@
                         'darkworld_northeast',
                         'darkworld_south',
                         'darkworld_mire'),
-                    ganon_tower: mode.keysanity && world.ganon_tower
+                    ganon_tower: keysanity && world.ganon_tower
                 });
             },
             toggle_item(name) {
