@@ -1695,6 +1695,90 @@ describe('Model', () => {
 
             });
 
+            context('misery mire', () => {
+
+                it('uses region access logic for locations', () => {
+                    inventory('bombos ether quake').update(model);
+                    model.state().dungeons.mire.locations.main.should.equal(false);
+                });
+
+                with_cases(
+                [dungeon.initial, inventory.none, 'main', false],
+                [dungeon.initial, inventory.none, 'bridge', false],
+                [dungeon.initial, inventory.none, 'map', false],
+                [dungeon.initial, inventory.none, 'spike', false],
+                [dungeon.initial, inventory('moonpearl boots sword flute mitt bombos ether quake'), 'main', true],
+                [dungeon.initial, inventory('moonpearl boots sword flute mitt bombos ether quake'), 'bridge', true],
+                [dungeon.initial, inventory('moonpearl boots sword flute mitt bombos ether quake'), 'map', true],
+                [dungeon.initial, inventory('moonpearl boots sword flute mitt bombos ether quake'), 'spike', true],
+                [dungeon({ medallion: 1 }), inventory('moonpearl boots sword flute mitt bombos'), 'main', true],
+                [dungeon({ medallion: 1 }), inventory('moonpearl boots sword flute mitt bombos'), 'bridge', true],
+                [dungeon({ medallion: 1 }), inventory('moonpearl boots sword flute mitt bombos'), 'map', true],
+                [dungeon({ medallion: 1 }), inventory('moonpearl boots sword flute mitt bombos'), 'spike', true],
+                [dungeon({ medallion: 2 }), inventory('moonpearl boots sword flute mitt ether'), 'main', true],
+                [dungeon({ medallion: 2 }), inventory('moonpearl boots sword flute mitt ether'), 'bridge', true],
+                [dungeon({ medallion: 2 }), inventory('moonpearl boots sword flute mitt ether'), 'map', true],
+                [dungeon({ medallion: 2 }), inventory('moonpearl boots sword flute mitt ether'), 'spike', true],
+                [dungeon({ medallion: 3 }), inventory('moonpearl boots sword flute mitt quake'), 'main', true],
+                [dungeon({ medallion: 3 }), inventory('moonpearl boots sword flute mitt quake'), 'bridge', true],
+                [dungeon({ medallion: 3 }), inventory('moonpearl boots sword flute mitt quake'), 'map', true],
+                [dungeon({ medallion: 3 }), inventory('moonpearl boots sword flute mitt quake'), 'spike', true],
+                [dungeon.initial, inventory.none, 'compass', false],
+                [dungeon.initial, inventory.none, 'big_key', false],
+                [dungeon.initial, inventory('moonpearl boots sword flute mitt firerod bombos ether quake'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl boots sword flute mitt firerod bombos ether quake'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl boots sword flute mitt lamp bombos ether quake'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl boots sword flute mitt lamp bombos ether quake'), 'big_key', true],
+                [dungeon({ medallion: 1 }), inventory('moonpearl boots sword flute mitt firerod bombos'), 'compass', true],
+                [dungeon({ medallion: 1 }), inventory('moonpearl boots sword flute mitt firerod bombos'), 'big_key', true],
+                [dungeon({ medallion: 1 }), inventory('moonpearl boots sword flute mitt lamp bombos'), 'compass', true],
+                [dungeon({ medallion: 1 }), inventory('moonpearl boots sword flute mitt lamp bombos'), 'big_key', true],
+                [dungeon({ medallion: 2 }), inventory('moonpearl boots sword flute mitt firerod ether'), 'compass', true],
+                [dungeon({ medallion: 2 }), inventory('moonpearl boots sword flute mitt firerod ether'), 'big_key', true],
+                [dungeon({ medallion: 2 }), inventory('moonpearl boots sword flute mitt lamp ether'), 'compass', true],
+                [dungeon({ medallion: 2 }), inventory('moonpearl boots sword flute mitt lamp ether'), 'big_key', true],
+                [dungeon({ medallion: 3 }), inventory('moonpearl boots sword flute mitt firerod quake'), 'compass', true],
+                [dungeon({ medallion: 3 }), inventory('moonpearl boots sword flute mitt firerod quake'), 'big_key', true],
+                [dungeon({ medallion: 3 }), inventory('moonpearl boots sword flute mitt lamp quake'), 'compass', true],
+                [dungeon({ medallion: 3 }), inventory('moonpearl boots sword flute mitt lamp quake'), 'big_key', true],
+                [dungeon.initial, inventory.none, 'big_chest', false],
+                [dungeon({ big_key: true }), inventory('moonpearl boots sword flute mitt bombos ether quake'), 'big_chest', true],
+                [dungeon({ medallion: 1, big_key: true }), inventory('moonpearl boots sword flute mitt bombos'), 'big_chest', true],
+                [dungeon({ medallion: 2, big_key: true }), inventory('moonpearl boots sword flute mitt ether'), 'big_chest', true],
+                [dungeon({ medallion: 3, big_key: true }), inventory('moonpearl boots sword flute mitt quake'), 'big_chest', true],
+                [dungeon.initial, inventory.none, 'boss', false],
+                [dungeon({ big_key: true }), inventory('moonpearl boots sword flute mitt somaria bombos ether quake lamp'), 'boss', true],
+                [dungeon({ big_key: true }), inventory('moonpearl boots sword flute mitt somaria bombos ether quake'), 'boss', 'dark'],
+                [dungeon({ medallion: 1, big_key: true }), inventory('moonpearl boots sword flute mitt somaria bombos lamp'), 'boss', true],
+                [dungeon({ medallion: 1, big_key: true }), inventory('moonpearl boots sword flute mitt somaria bombos'), 'boss', 'dark'],
+                [dungeon({ medallion: 2, big_key: true }), inventory('moonpearl boots sword flute mitt somaria ether lamp'), 'boss', true],
+                [dungeon({ medallion: 2, big_key: true }), inventory('moonpearl boots sword flute mitt somaria ether'), 'boss', 'dark'],
+                [dungeon({ medallion: 3, big_key: true }), inventory('moonpearl boots sword flute mitt somaria quake lamp'), 'boss', true],
+                [dungeon({ medallion: 3, big_key: true }), inventory('moonpearl boots sword flute mitt somaria quake'), 'boss', 'dark'],
+                (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'mire');
+                    inventory.update(model);
+                    model.state().dungeons.mire.locations[location].should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory.none, false],
+                [dungeon({ big_key: true }), inventory('moonpearl boots sword flute mitt somaria bombos ether quake lamp'), true],
+                [dungeon({ big_key: true }), inventory('moonpearl boots sword flute mitt somaria bombos ether quake'), 'dark'],
+                [dungeon({ medallion: 1, big_key: true }), inventory('moonpearl boots sword flute mitt somaria bombos lamp'), true],
+                [dungeon({ medallion: 1, big_key: true }), inventory('moonpearl boots sword flute mitt somaria bombos'), 'dark'],
+                [dungeon({ medallion: 2, big_key: true }), inventory('moonpearl boots sword flute mitt somaria ether lamp'), true],
+                [dungeon({ medallion: 2, big_key: true }), inventory('moonpearl boots sword flute mitt somaria ether'), 'dark'],
+                [dungeon({ medallion: 3, big_key: true }), inventory('moonpearl boots sword flute mitt somaria quake lamp'), true],
+                [dungeon({ medallion: 3, big_key: true }), inventory('moonpearl boots sword flute mitt somaria quake'), 'dark'],
+                (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'mire');
+                    inventory.update(model);
+                    model.state().dungeons.mire.completable.should.equal(state);
+                }));
+
+            });
+
         });
 
     });
