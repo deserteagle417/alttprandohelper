@@ -1425,6 +1425,88 @@ describe('Model', () => {
 
             });
 
+            context('skull woods', () => {
+
+                with_cases(
+                [dungeon.initial, inventory.none, 'big_key', false],
+                [dungeon.initial, inventory.none, 'compass', false],
+                [dungeon.initial, inventory.none, 'map', false],
+                [dungeon.initial, inventory.none, 'pot_prison', false],
+                [dungeon.initial, inventory('moonpearl glove hammer'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl glove hammer'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl glove hammer'), 'map', true],
+                [dungeon.initial, inventory('moonpearl glove hammer'), 'pot_prison', true],
+                [dungeon.initial, inventory('moonpearl mitt'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl mitt'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl mitt'), 'map', true],
+                [dungeon.initial, inventory('moonpearl mitt'), 'pot_prison', true],
+                [dungeon.initial, inventory.none, 'big_chest', false],
+                [dungeon({ big_key: true }), inventory('moonpearl glove hammer'), 'big_chest', true],
+                [dungeon({ big_key: true }), inventory('moonpearl mitt'), 'big_chest', true],
+                [dungeon.initial, inventory.none, 'bridge', false],
+                [dungeon.initial, inventory('moonpearl glove hammer firerod'), 'bridge', true],
+                [dungeon.initial, inventory('moonpearl mitt firerod'), 'bridge', true],
+                [dungeon.initial, inventory.none, 'boss', false],
+                [dungeon.initial, inventory('moonpearl glove hammer firerod sword'), 'boss', true],
+                [dungeon.initial, inventory('moonpearl mitt firerod sword'), 'boss', true],
+                (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'skull');
+                    inventory.update(model);
+                    model.state().dungeons.skull.locations[location].should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory('moonpearl hookshot flippers'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl hookshot flippers'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl hookshot flippers'), 'map', true],
+                [dungeon.initial, inventory('moonpearl hookshot flippers'), 'pot_prison', true],
+                [dungeon.initial, inventory('moonpearl hookshot glove'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl hookshot glove'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl hookshot glove'), 'map', true],
+                [dungeon.initial, inventory('moonpearl hookshot glove'), 'pot_prison', true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer'), 'big_key', true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer'), 'compass', true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer'), 'map', true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer'), 'pot_prison', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot flippers'), 'big_chest', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot glove'), 'big_chest', true],
+                [dungeon({ big_key: true }), inventory('moonpearl hookshot hammer'), 'big_chest', true],
+                [dungeon.initial, inventory('moonpearl hookshot flippers firerod'), 'bridge', true],
+                [dungeon.initial, inventory('moonpearl hookshot glove firerod'), 'bridge', true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer firerod'), 'bridge', true],
+                [dungeon.initial, inventory('moonpearl hookshot flippers firerod sword'), 'boss', true],
+                [dungeon.initial, inventory('moonpearl hookshot glove firerod sword'), 'boss', true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer firerod sword'), 'boss', true],
+                (dungeon, inventory, location, state) => it(`show ${location} ${as(state)} for ${dungeon} ${inventory}, and agahnim defeated`, () => {
+                    model.toggle_completion('castle_tower');
+                    dungeon.update(model, 'skull');
+                    inventory.update(model);
+                    model.state().dungeons.skull.locations[location].should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory.none, false],
+                [dungeon.initial, inventory('moonpearl glove hammer firerod sword'), true],
+                [dungeon.initial, inventory('moonpearl mitt firerod sword'), true],
+                (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}`, () => {
+                    dungeon.update(model, 'skull');
+                    inventory.update(model);
+                    model.state().dungeons.skull.completable.should.equal(state);
+                }));
+
+                with_cases(
+                [dungeon.initial, inventory('moonpearl hookshot flippers firerod sword'), true],
+                [dungeon.initial, inventory('moonpearl hookshot glove firerod sword'), true],
+                [dungeon.initial, inventory('moonpearl hookshot hammer firerod sword'), true],
+                (dungeon, inventory, state) => it(`show completable ${as(state)} for ${dungeon} ${inventory}, and agahnim defeated`, () => {
+                    model.toggle_completion('castle_tower');
+                    dungeon.update(model, 'skull');
+                    inventory.update(model);
+                    model.state().dungeons.skull.completable.should.equal(state);
+                }));
+
+            });
+
         });
 
     });
