@@ -1,48 +1,64 @@
-(function(window) {
+(function (window) {
     'use strict';
 
+    var items_base = {
+        get fightersword() {
+            return this.sword >= 1;
+        },
+        get mastersword() {
+            return this.sword >= 2;
+        },
+        get can_shoot_bow() {
+            return this.bow > 1;
+        },
+        get has_cane() {
+            return this.somaria || this.byrna;
+        },
+        get has_rod() {
+            return this.firerod || this.icerod;
+        },
+        get can_lift_light() {
+            return this.glove >= 1;
+        },
+        get can_lift_heavy() {
+            return this.glove >= 2;
+        },
+        get can_flute() {
+            return this.flute;
+        },
+        get can_light_torch() {
+            return this.lamp || this.firerod;
+        },
+        get can_melt() {
+            return this.firerod || /*mode.swordless ||*/this.fightersword && this.bombos;
+        },
+        get can_avoid_laser() {
+            return this.cape || this.byrna || this.shield >= 3;
+        },
+        get has_bottle() {
+            return this.bottle >= 1;
+        },
+
+        has_medallion: function has_medallion(medallion) {
+            return this.bombos && this.ether && this.quake || medallion !== 'unknown' && this[medallion];
+        },
+        might_have_medallion: function might_have_medallion(medallion) {
+            return medallion === 'unknown' && (this.bombos || this.ether || this.quake);
+        },
+
+
+        limit: {
+            tunic: [3, 1],
+            sword: 4,
+            shield: 3,
+            bottle: 4,
+            bow: 3,
+            boomerang: 3,
+            glove: 2
+        }
+    };
+
     var items = {
-        has_melee: function() { return this.sword || this.hammer; },
-        has_bow: function() { return this.bow > 1; },
-        has_melee_bow: function() { return this.has_melee() || this.has_bow(); },
-        has_cane: function() { return this.somaria || this.byrna; },
-        has_rod: function() { return this.firerod || this.icerod; },
-        has_fire: function() { return this.lantern || this.firerod; },
-
-        can_reach_outcast: function(agahnim) {
-            return this.moonpearl && (
-                this.glove === 2 || this.glove && this.hammer ||
-                agahnim && this.hookshot && (this.hammer || this.glove || this.flippers));
-        },
-
-        medallion_check: function(medallion) {
-            if (!this.sword || !this.bombos && !this.ether && !this.quake) return 'unavailable';
-            if (medallion === 1 && !this.bombos ||
-                medallion === 2 && !this.ether ||
-                medallion === 3 && !this.quake) return 'unavailable';
-            if (medallion === 0 && !(this.bombos && this.ether && this.quake)) return 'possible';
-        },
-
-        inc: counters(1, {
-            tunic: { min: 1, max: 3 },
-            sword: { max: 4 },
-            shield: { max: 3 },
-            bottle: { max: 4 },
-            bow: { max: 3 },
-            boomerang: { max: 3 },
-            glove: { max: 2 }
-        })
-    };
-
-    function counters(delta, limits) {
-        return function(item) {
-            var max = limits[item].max,
-                min = limits[item].min;
-            return counter(this[item], delta, max, min);
-        };
-    };
-
-    var open_items = create(items, {
         tunic: 1,
         sword: 0,
         shield: 0,
@@ -60,7 +76,7 @@
         ether: false,
         quake: false,
 
-        lantern: false,
+        lamp: false,
         hammer: false,
         shovel: false,
         net: false,
@@ -76,11 +92,9 @@
         glove: 0,
         flippers: false,
         flute: false
-    });
-
-    var standard_items = update(open_items, { sword: { $set: 1 } });
-
-    window.item_model = function(mode) {
-        return { items: { standard: standard_items }[mode] || open_items };
     };
-}(window));
+
+    window.create_items = function () {
+        return { items: _.create(items_base, items) };
+    };
+})(window);
